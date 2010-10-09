@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual C# Express 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue.Framework", "ComponentGlue.Framework\ComponentGlue.Framework.csproj", "{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue.Tests", "ComponentGlue.Tests\ComponentGlue.Tests.csproj", "{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
