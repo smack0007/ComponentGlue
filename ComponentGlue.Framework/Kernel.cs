@@ -5,7 +5,7 @@ using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
-	public class Kernel : IKernel, IDisposable, IBindingSyntaxFor, IBindingSyntaxBind
+	public class Kernel : IKernel, IDisposable, IBindingSyntaxRoot
 	{
 		Dictionary<Type, object> components;
 		BindingCollection defaultBindings;
@@ -19,6 +19,8 @@ namespace ComponentGlue.Framework
 			this.components = new Dictionary<Type, object>();
 			this.defaultBindings = new BindingCollection();
 			this.componentBindings = new Dictionary<Type, BindingCollection>();
+
+			this.Bind<IKernel>().ToConstant(this);
 		}
 
 		/// <summary>
@@ -149,12 +151,12 @@ namespace ComponentGlue.Framework
 			object component = null;
 
 			// Specific bindings
-			if(this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].Has(interfaceType))
-				component = GetComponentByBinding(constructedType, this.componentBindings[constructedType].Get(interfaceType));
+			if(this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(interfaceType))
+				component = GetComponentByBinding(constructedType, this.componentBindings[constructedType].GetBinding(interfaceType));
 			
 			// Default bindings
-			if(component == null && this.defaultBindings.Has(interfaceType))
-				component = GetComponentByBinding(constructedType, this.defaultBindings.Get(interfaceType));
+			if(component == null && this.defaultBindings.HasBinding(interfaceType))
+				component = GetComponentByBinding(constructedType, this.defaultBindings.GetBinding(interfaceType));
 
 			// Component not found
 			if(component == null)
@@ -207,6 +209,26 @@ namespace ComponentGlue.Framework
 		public IBindingSyntaxTo Bind<TInterfaceType>()
 		{
 			return Bind(typeof(TInterfaceType));
+		}
+
+		public bool HasBinding(Type interfaceType)
+		{
+			return this.defaultBindings.HasBinding(interfaceType);
+		}
+
+		public bool HasBinding<TInterfaceType>()
+		{
+			return HasBinding(typeof(TInterfaceType));
+		}
+
+		public IBindingSyntaxTo Rebind(Type interfaceType)
+		{
+			return this.defaultBindings.Rebind(interfaceType);
+		}
+
+		public IBindingSyntaxTo Rebind<TInterfaceType>()
+		{
+			return Rebind(typeof(TInterfaceType));
 		}
 	}
 }

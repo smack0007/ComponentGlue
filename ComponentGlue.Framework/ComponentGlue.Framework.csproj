@@ -43,6 +43,7 @@
     <Compile Include="Binding.cs" />
     <Compile Include="BindingCollection.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxFor.cs" />
+    <Compile Include="BindingSyntax\IBindingSyntaxRoot.cs" />
     <Compile Include="BindType.cs" />
     <Compile Include="IKernel.cs" />
     <Compile Include="InjectAttribute.cs" />

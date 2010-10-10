@@ -15,7 +15,48 @@ namespace ComponentGlue.Tests
 			Kernel kernel = new Kernel();
 			kernel.Bind<IBar>().To<Foo>();
 		}
-		
+
+		[Test]
+		public void KernelIsBoundToIKernalByDefault()
+		{
+			Kernel kernel = new Kernel();
+			var instance = kernel.Construct<NeedsKernel>();
+		}
+
+		[Test]
+		public void HasBindingReturnsTrueWhenBindingExists()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Bind<IFoo>().To<Foo>();
+
+			Assert.IsTrue(kernel.HasBinding<IFoo>());
+		}
+
+		[Test]
+		public void HasBindingReturnsFalseWhenBindingDoesNotExist()
+		{
+			Kernel kernel = new Kernel();
+			
+			Assert.IsFalse(kernel.HasBinding<IFoo>());
+		}
+
+		[Test]
+		public void RebindAddsBindingWhenBindingDoesNotAlreadyExist()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Rebind<IFoo>().To<Foo>();
+
+			Assert.IsTrue(kernel.HasBinding<IFoo>());
+		}
+
+		[Test]
+		public void RebindDoesNotThrowExceptionWhenBindingAlreadyExists()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Bind<IBar>().To<Bar1>();
+			kernel.Rebind<IBar>().To<Bar2>();
+		}
+
 		[Test]
 		public void ConstructClassWithUnmarkedDefaultConstructor()
 		{
