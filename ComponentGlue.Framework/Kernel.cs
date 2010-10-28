@@ -20,7 +20,8 @@ namespace ComponentGlue.Framework
 			this.defaultBindings = new BindingCollection();
 			this.componentBindings = new Dictionary<Type, BindingCollection>();
 
-			this.Bind<IKernel>().ToConstant(this);
+			Bind<IKernel>().ToConstant(this);
+			Bind<Kernel>().ToConstant(this);
 		}
 
 		/// <summary>
