@@ -45,6 +45,7 @@
     <Compile Include="BindingSyntax\IBindingSyntaxFor.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxRoot.cs" />
     <Compile Include="BindType.cs" />
+    <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IKernel.cs" />
     <Compile Include="InjectAttribute.cs" />

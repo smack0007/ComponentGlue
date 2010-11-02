@@ -228,5 +228,16 @@ namespace ComponentGlue.Framework
 		{
 			return Rebind(typeof(TInterfaceType));
 		}
+
+		public void AutoBind()
+		{
+			foreach(Type componentType in Assembly.GetEntryAssembly().GetTypes())
+			{
+				foreach(DefaultComponentAttribute binding in componentType.GetCustomAttributes(typeof(DefaultComponentAttribute), false))
+				{
+					Rebind(binding.InterfaceType).To(componentType);
+				}
+			}
+		}
 	}
 }
