@@ -43,9 +43,13 @@
   <ItemGroup>
     <Compile Include="Classes\Bar1.cs" />
     <Compile Include="Classes\Bar2.cs" />
+    <Compile Include="Classes\Bar3.cs" />
+    <Compile Include="Classes\Baz1.cs" />
+    <Compile Include="Classes\Baz2.cs" />
     <Compile Include="Classes\DefaultConstructor.cs" />
     <Compile Include="Classes\Foo.cs" />
     <Compile Include="Classes\IBar.cs" />
+    <Compile Include="Classes\IBaz.cs" />
     <Compile Include="Classes\IFoo.cs" />
     <Compile Include="KernelTests.cs" />
     <Compile Include="Classes\NeedsKernel.cs" />

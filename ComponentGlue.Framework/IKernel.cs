@@ -13,9 +13,7 @@ namespace ComponentGlue.Framework
 		/// <param name="type"></param>
 		/// <returns></returns>
 		object Construct(Type type);
-
-		T Construct<T>();
-
+				
 		/// <summary>
 		/// Gets an instance of type.
 		/// </summary>
@@ -23,8 +21,10 @@ namespace ComponentGlue.Framework
 		/// <returns></returns>
 		object Get(Type type);
 
-		T Get<T>();
-
+		/// <summary>
+		/// Injects components into the properties of the instance marked with an Inject attribute.
+		/// </summary>
+		/// <param name="instance"></param>
 		void Inject(object component);
 	}
 }

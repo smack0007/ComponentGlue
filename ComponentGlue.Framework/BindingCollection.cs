@@ -33,11 +33,6 @@ namespace ComponentGlue.Framework
 			return binding;
 		}
 
-		public IBindingSyntaxTo Bind<TInterfaceType>()
-		{
-			return Bind(typeof(TInterfaceType));
-		}
-
 		public bool HasBinding(Type interfaceType)
 		{
 			return this.bindings.ContainsKey(interfaceType);

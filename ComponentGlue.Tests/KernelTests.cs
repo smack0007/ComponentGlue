@@ -263,5 +263,38 @@ namespace ComponentGlue.Tests
 			Assert.AreEqual(typeof(Foo), constructedType);
 			Assert.AreEqual(typeof(IBar), interfaceType);
 		}
+
+		[Test]
+		public void ChildKernelProxiesToParentKernelWhenChildKernelHasNoBinding()
+		{
+			Kernel parent = new Kernel();
+			parent.Bind<IBaz>().To<Baz1>().AsShared();
+
+			Kernel child = new Kernel(parent);
+			child.Bind<IBar>().To<Bar3>().AsShared();
+
+			Foo foo = child.Get<Foo>();
+
+			Assert.IsInstanceOf(typeof(Foo), foo);
+			Assert.IsInstanceOf(typeof(Bar3), foo.Bar);
+			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)foo.Bar).Baz);
+		}
+
+		[Test]
+		public void ChildKernelDoesNotProxyToParentKernelWhenChildKernelHasBinding()
+		{
+			Kernel parent = new Kernel();
+			parent.Bind<IBaz>().To<Baz1>().AsShared();
+
+			Kernel child = new Kernel(parent);
+			child.Bind<IBar>().To<Bar3>().AsShared();
+			child.Bind<IBaz>().To<Baz2>().AsShared();
+
+			Foo foo = child.Get<Foo>();
+
+			Assert.IsInstanceOf(typeof(Foo), foo);
+			Assert.IsInstanceOf(typeof(Bar3), foo.Bar);
+			Assert.IsInstanceOf(typeof(Baz2), ((Bar3)foo.Bar).Baz);
+		}
 	}
 }

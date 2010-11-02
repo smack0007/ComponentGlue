@@ -10,14 +10,7 @@ namespace ComponentGlue.Framework.BindingSyntax
 		/// <param name="componentType"></param>
 		/// <returns></returns>
 		IBindingSyntaxAs To(Type componentType);
-
-		/// <summary>
-		/// Sets the component type.
-		/// </summary>
-		/// <typeparam name="TComponentType"></typeparam>
-		/// <returns></returns>
-		IBindingSyntaxAs To<TComponentType>();
-
+				
 		/// <summary>
 		/// Sets the component type to the interface type.
 		/// </summary>

@@ -12,13 +12,6 @@ namespace ComponentGlue.Framework.BindingSyntax
 		IBindingSyntaxTo Bind(Type interfaceType);
 
 		/// <summary>
-		/// Adds a binding.
-		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
-		/// <returns></returns>
-		IBindingSyntaxTo Bind<TInterfaceType>();
-
-		/// <summary>
 		/// Returns whether or not a binding has already been set.
 		/// </summary>
 		/// <param name="interfaceType"></param>
@@ -26,24 +19,10 @@ namespace ComponentGlue.Framework.BindingSyntax
 		bool HasBinding(Type interfaceType);
 
 		/// <summary>
-		/// Returns whether or not a binding has already been set.
-		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
-		/// <returns></returns>
-		bool HasBinding<TInterfaceType>();
-
-		/// <summary>
 		/// Adds a binding, overriding any existing binding.
 		/// </summary>
 		/// <param name="interfaceType"></param>
 		/// <returns></returns>
 		IBindingSyntaxTo Rebind(Type interfaceType);
-
-		/// <summary>
-		/// Adds a binding, overriding any existing binding.
-		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
-		/// <returns></returns>
-		IBindingSyntaxTo Rebind<TInterfaceType>();
 	}
 }

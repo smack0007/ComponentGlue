@@ -7,6 +7,8 @@ namespace ComponentGlue.Framework
 {
 	public class Kernel : IKernel, IDisposable, IBindingSyntaxRoot
 	{
+		Kernel parent;
+
 		Dictionary<Type, object> components;
 		BindingCollection defaultBindings;
 		Dictionary<Type, BindingCollection> componentBindings;
@@ -15,13 +17,24 @@ namespace ComponentGlue.Framework
 		/// Constructor.
 		/// </summary>
 		public Kernel()
+			: this(null)
 		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="parent">A parent kernel.</param>
+		public Kernel(Kernel parent)
+		{
+			this.parent = parent;
+
 			this.components = new Dictionary<Type, object>();
 			this.defaultBindings = new BindingCollection();
 			this.componentBindings = new Dictionary<Type, BindingCollection>();
 
-			Bind<IKernel>().ToConstant(this);
-			Bind<Kernel>().ToConstant(this);
+			Bind(typeof(Kernel)).ToConstant(this);
+			Bind(typeof(IKernel)).ToConstant(this);
 		}
 
 		/// <summary>
@@ -79,12 +92,7 @@ namespace ComponentGlue.Framework
 				return defaultConstructor.Invoke(null);
 			}
 		}
-
-		public TComponentType Construct<TComponentType>()
-		{
-			return (TComponentType)Construct(typeof(TComponentType));
-		}
-				
+								
 		/// <summary>
 		/// Gets an instance of a type.
 		/// </summary>
@@ -99,12 +107,7 @@ namespace ComponentGlue.Framework
 			this.components[componentType] = component;
 			return component;
 		}
-
-		public TComponentType Get<TComponentType>()
-		{
-			return (TComponentType)Get(typeof(TComponentType));
-		}
-
+				
 		/// <summary>
 		/// Gets a component instance based on a binding.
 		/// </summary>
@@ -159,6 +162,10 @@ namespace ComponentGlue.Framework
 			if(component == null && this.defaultBindings.HasBinding(interfaceType))
 				component = GetComponentByBinding(constructedType, this.defaultBindings.GetBinding(interfaceType));
 
+			// Proxy to parent container if available
+			if(component == null && this.parent != null)
+				component = this.parent.GetComponentForInjection(constructedType, interfaceType);
+
 			// Component not found
 			if(component == null)
 				throw new InvalidOperationException("Failed to get component of type " + interfaceType + " for injection into " + constructedType);
@@ -197,29 +204,19 @@ namespace ComponentGlue.Framework
 			return this.componentBindings[constructedType];
 		}
 
-		public IBindingSyntaxBind For<TConstructedType>()
-		{
-			return For(typeof(TConstructedType));
-		}
-
 		public IBindingSyntaxTo Bind(Type interfaceType)
 		{
 			return this.defaultBindings.Bind(interfaceType);
 		}
 
-		public IBindingSyntaxTo Bind<TInterfaceType>()
-		{
-			return Bind(typeof(TInterfaceType));
-		}
-
-		public bool HasBinding(Type interfaceType)
-		{
-			return this.defaultBindings.HasBinding(interfaceType);
-		}
-
 		public bool HasBinding<TInterfaceType>()
 		{
 			return HasBinding(typeof(TInterfaceType));
+		}
+		
+		public bool HasBinding(Type interfaceType)
+		{
+			return this.defaultBindings.HasBinding(interfaceType);
 		}
 
 		public IBindingSyntaxTo Rebind(Type interfaceType)

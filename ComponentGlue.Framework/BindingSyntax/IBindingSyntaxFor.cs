@@ -10,12 +10,5 @@ namespace ComponentGlue.Framework.BindingSyntax
 		/// <param name="constructedType"></param>
 		/// <returns></returns>
 		IBindingSyntaxBind For(Type constructedType);
-
-		/// <summary>
-		/// Begins a specific binding.
-		/// </summary>
-		/// <typeparam name="TConstructedType"></typeparam>
-		/// <returns></returns>
-		IBindingSyntaxBind For<TConstructedType>();
 	}
 }
