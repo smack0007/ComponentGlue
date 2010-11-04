@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\AbstractClass.cs" />
     <Compile Include="Classes\Bar1.cs" />
     <Compile Include="Classes\Bar2.cs" />
     <Compile Include="Classes\Bar3.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="Classes\IBar.cs" />
     <Compile Include="Classes\IBaz.cs" />
     <Compile Include="Classes\IFoo.cs" />
+    <Compile Include="Classes\ISimple.cs" />
+    <Compile Include="Classes\Simple.cs" />
     <Compile Include="KernelTests.cs" />
     <Compile Include="Classes\NeedsKernel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

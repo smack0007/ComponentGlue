@@ -3,11 +3,9 @@ using ComponentGlue.Framework;
 
 namespace ComponentGlue.Demo
 {
-	[DefaultComponent(typeof(IBar))]
-	public class Bar : IBar
+	public class Baz2 : IBaz
 	{
-		[Inject]
-		public Bar()
+		public Baz2()
 		{
 		}
 	}

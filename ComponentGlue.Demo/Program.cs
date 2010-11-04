@@ -10,7 +10,7 @@ namespace ComponentGlue.Demo
 			Kernel kernel = new Kernel();
 			kernel.AutoBind();
 
-			Foo foo = kernel.Get<Foo>();
+			IFoo foo = kernel.Get<IFoo>();
 		}
 	}
 }

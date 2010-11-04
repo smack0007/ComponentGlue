@@ -54,6 +54,17 @@ namespace ComponentGlue.Framework
 		/// <returns></returns>
 		public object Construct(Type componentType)
 		{
+			if(componentType.IsInterface)
+			{
+				if(!this.defaultBindings.HasBinding(componentType))
+					throw new InvalidOperationException("No default binding available for the interface " + componentType + ".");
+
+				componentType = this.defaultBindings.GetBinding(componentType).ComponentType;
+			}
+
+			if(componentType.IsAbstract)
+				throw new InvalidOperationException(componentType + " is abstract.");
+
 			ConstructorInfo defaultConstructor = null;
 			ConstructorInfo injectableConstructor = null;
 			foreach(ConstructorInfo constructor in componentType.GetConstructors())
@@ -66,7 +77,7 @@ namespace ComponentGlue.Framework
 					if(attribute is InjectAttribute)
 					{
 						if(injectableConstructor != null)
-							throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType);
+							throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType + ".");
 
 						injectableConstructor = constructor;
 					}
@@ -74,7 +85,7 @@ namespace ComponentGlue.Framework
 			}
 
 			if(defaultConstructor == null && injectableConstructor == null)
-				throw new InvalidOperationException("No injectable or default constructor found for type " + componentType);
+				throw new InvalidOperationException("No injectable or default constructor found for type " + componentType + ".");
 
 			if(injectableConstructor != null)
 			{
@@ -136,7 +147,7 @@ namespace ComponentGlue.Framework
 					component = binding.Method(constructedType, binding.InterfaceType);
 
 					if(!(binding.InterfaceType.IsAssignableFrom(component.GetType())))
-						throw new InvalidOperationException("Factory method did not produce and instance of " + binding.InterfaceType);
+						throw new InvalidOperationException("Factory method did not produce and instance of " + binding.InterfaceType + ".");
 
 					break;
 			}
@@ -168,7 +179,7 @@ namespace ComponentGlue.Framework
 
 			// Component not found
 			if(component == null)
-				throw new InvalidOperationException("Failed to get component of type " + interfaceType + " for injection into " + constructedType);
+				throw new InvalidOperationException("Failed to get component of type " + interfaceType + " for injection into " + constructedType + ".");
 
 			return component;
 		}
@@ -208,12 +219,7 @@ namespace ComponentGlue.Framework
 		{
 			return this.defaultBindings.Bind(interfaceType);
 		}
-
-		public bool HasBinding<TInterfaceType>()
-		{
-			return HasBinding(typeof(TInterfaceType));
-		}
-		
+						
 		public bool HasBinding(Type interfaceType)
 		{
 			return this.defaultBindings.HasBinding(interfaceType);
@@ -223,19 +229,62 @@ namespace ComponentGlue.Framework
 		{
 			return this.defaultBindings.Rebind(interfaceType);
 		}
-
-		public IBindingSyntaxTo Rebind<TInterfaceType>()
-		{
-			return Rebind(typeof(TInterfaceType));
-		}
-
+				
 		public void AutoBind()
 		{
-			foreach(Type componentType in Assembly.GetEntryAssembly().GetTypes())
+			AutoBind(Assembly.GetEntryAssembly());
+		}
+
+		public void AutoBind(Assembly assembly)
+		{
+			Dictionary<Type, List<Type>> implementors = new Dictionary<Type,List<Type>>();
+
+			foreach(Type componentType in assembly.GetTypes())
 			{
-				foreach(DefaultComponentAttribute binding in componentType.GetCustomAttributes(typeof(DefaultComponentAttribute), false))
+				if(componentType.IsClass)
 				{
-					Rebind(binding.InterfaceType).To(componentType);
+					foreach(Type interfaceType in componentType.GetInterfaces())
+					{
+						if(!implementors.ContainsKey(interfaceType))
+							implementors.Add(interfaceType, new List<Type>());
+
+						if(!implementors[interfaceType].Contains(componentType))
+							implementors[interfaceType].Add(componentType);
+					}
+				}
+			}
+
+			foreach(Type interfaceType in implementors.Keys)
+			{
+				if(!HasBinding(interfaceType))
+				{
+					if(implementors[interfaceType].Count == 1) // One implementor so we have the default binding
+					{
+						Bind(interfaceType).To(implementors[interfaceType][0]);
+					}
+					else
+					{
+						Type defaultComponent = null;
+
+						foreach(Type componentType in implementors[interfaceType])
+						{
+							foreach(DefaultComponentAttribute attribute in componentType.GetCustomAttributes(typeof(DefaultComponentAttribute), false))
+							{
+								if(attribute.InterfaceType == interfaceType)
+								{
+									if(defaultComponent != null)
+										throw new InvalidOperationException("More than one component is marked as DefaultComponent for " + interfaceType + ".");
+
+									defaultComponent = componentType;
+								}
+							}
+						}
+
+						if(defaultComponent == null)
+							throw new InvalidOperationException("There exists more than one component for " + interfaceType + " but none are marked as the DefaultComponent.");
+
+						Bind(interfaceType).To(defaultComponent);
+					}
 				}
 			}
 		}

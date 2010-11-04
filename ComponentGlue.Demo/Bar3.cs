@@ -1,7 +1,7 @@
 ﻿using System;
 using ComponentGlue.Framework;
 
-namespace ComponentGlue.Tests.Classes
+namespace ComponentGlue.Demo
 {
 	[DefaultComponent(typeof(IBar))]
 	public class Bar3 : IBar

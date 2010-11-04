@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using NUnit.Framework;
 using ComponentGlue.Framework;
 using ComponentGlue.Tests.Classes;
@@ -9,11 +10,75 @@ namespace ComponentGlue.Tests
 	public class KernelTests
 	{
 		[Test]
+		public void AutoBindBindsCorrectlyForInterfacesWithOneImplementor()
+		{
+			Kernel kernel = new Kernel();
+			kernel.AutoBind(Assembly.GetExecutingAssembly());
+
+			Assert.IsTrue(kernel.HasBinding<ISimple>());
+			Assert.IsInstanceOf(typeof(ISimple), kernel.Get<ISimple>());
+		}
+
+		[Test]
+		public void AutoBindBindsCorrectlyForInterfacesWithMultipleImplementors()
+		{
+			Kernel kernel = new Kernel();
+			kernel.AutoBind(Assembly.GetExecutingAssembly());
+
+			Assert.IsTrue(kernel.HasBinding<IBaz>());
+			Assert.IsInstanceOf(typeof(Baz1), kernel.Get<IBaz>());
+		}
+
+		[Test]
+		public void AfterAutoBindFooCanBeResolved()
+		{
+			Kernel kernel = new Kernel();
+			kernel.AutoBind(Assembly.GetExecutingAssembly());
+
+			IFoo foo = kernel.Get<IFoo>();
+			Assert.IsInstanceOf(typeof(Foo), foo);
+			Assert.IsInstanceOf(typeof(Bar3), ((Foo)foo).Bar);
+			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)((Foo)foo).Bar).Baz);
+		}
+
+		[Test]
+		public void BindTypeAsNewInjectsNewInstanceAlways()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Bind<IBar>().To<Bar1>().AsNew();
+
+			Foo foo1 = kernel.Construct<Foo>();
+			Foo foo2 = kernel.Construct<Foo>();
+
+			Assert.AreNotSame(foo1.Bar, foo2.Bar);
+		}
+
+		[Test]
+		public void BindTypeAsSharedInjectsSameInstanceAlways()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Bind<IBar>().To<Bar1>().AsShared();
+
+			Foo foo1 = kernel.Construct<Foo>();
+			Foo foo2 = kernel.Construct<Foo>();
+
+			Assert.AreSame(foo1.Bar, foo2.Bar);
+		}
+
+		[Test]
 		[ExpectedException(typeof(InvalidOperationException))]
 		public void BindTypeWhichDoesNotImplementInterfaceThrowsException()
 		{
 			Kernel kernel = new Kernel();
 			kernel.Bind<IBar>().To<Foo>();
+		}
+
+		[Test]
+		[ExpectedException(typeof(InvalidOperationException))]
+		public void ConstructAbstractClassThrowsException()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Construct<AbstractClass>();
 		}
 
 		[Test]
@@ -79,29 +144,6 @@ namespace ComponentGlue.Tests
 			Assert.AreSame(instance1, instance2);
 		}
 
-		[Test]
-		public void BindTypeUseExistingInjectsSameInstanceAlways()
-		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsShared();
-
-			Foo foo1 = kernel.Construct<Foo>();
-			Foo foo2 = kernel.Construct<Foo>();
-
-			Assert.AreSame(foo1.Bar, foo2.Bar);
-		}
-
-		[Test]
-		public void BindTypeConstructNewInjectsNewInstanceAlways()
-		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsNew();
-
-			Foo foo1 = kernel.Construct<Foo>();
-			Foo foo2 = kernel.Construct<Foo>();
-
-			Assert.AreNotSame(foo1.Bar, foo2.Bar);
-		}
 
 		[Test]
 		public void SpecificBindingOverridesDefaultBinding()
@@ -295,6 +337,17 @@ namespace ComponentGlue.Tests
 			Assert.IsInstanceOf(typeof(Foo), foo);
 			Assert.IsInstanceOf(typeof(Bar3), foo.Bar);
 			Assert.IsInstanceOf(typeof(Baz2), ((Bar3)foo.Bar).Baz);
+		}
+
+		[Test]
+		public void ConstructClassByInterfaceUsesDefaultBindings()
+		{
+			Kernel kernel = new Kernel();
+			kernel.Bind<IBar>().To<Bar1>();
+
+			IBar bar = kernel.Get<IBar>();
+
+			Assert.IsInstanceOf(typeof(Bar1), bar);
 		}
 	}
 }
