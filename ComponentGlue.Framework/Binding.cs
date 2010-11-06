@@ -5,41 +5,60 @@ namespace ComponentGlue.Framework
 {
 	public class Binding : IBindingSyntaxTo, IBindingSyntaxAs
 	{
+		/// <summary>
+		/// The type of interface which is bound.
+		/// </summary>
 		public Type InterfaceType
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The concrete type to which the interface is bound.
+		/// </summary>
 		public Type ComponentType
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The type of binding.
+		/// </summary>
 		public BindType Type
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// The bound constant object.
+		/// </summary>
 		public object Constant
 		{
 			get;
 			private set;
 		}
 
-		public Func<Type, Type, object> Method
+		/// <summary>
+		/// The factory method.
+		/// </summary>
+		public Func<object> Method
 		{
 			get;
 			private set;
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="interfaceType"></param>
 		public Binding(Type interfaceType)
 		{
 			this.InterfaceType = interfaceType;
 			this.ComponentType = interfaceType;
-			this.Type = BindType.Shared;
+			this.Type = BindType.Transient;
 		}
 
 		public IBindingSyntaxAs To(Type componentType)
@@ -74,7 +93,7 @@ namespace ComponentGlue.Framework
 			this.Constant = value;
 		}
 
-		public void ToMethod(Func<Type, Type, object> factory)
+		public void ToMethod(Func<object> factory)
 		{
 			if(factory == null)
 				throw new ArgumentNullException("factory");
@@ -83,14 +102,14 @@ namespace ComponentGlue.Framework
 			this.Method = factory;
 		}
 
-		public void AsShared()
+		public void AsSingleton()
 		{
-			this.Type = BindType.Shared;
+			this.Type = BindType.Singleton;
 		}
 
-		public void AsNew()
+		public void AsTransient()
 		{
-			this.Type = BindType.New;
+			this.Type = BindType.Transient;
 		}
 	}
 }

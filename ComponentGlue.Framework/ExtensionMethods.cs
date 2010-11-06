@@ -6,16 +6,6 @@ namespace ComponentGlue.Framework
 	public static class ExtensionMethods
 	{
 		/// <summary>
-		/// Constructs a new instance of type T.
-		/// </summary>
-		/// <typeparam name="TComponentType"></typeparam>
-		/// <returns></returns>
-		public static TComponentType Construct<TComponentType>(this IKernel kernel)
-		{
-			return (TComponentType)kernel.Construct(typeof(TComponentType));
-		}
-
-		/// <summary>
 		/// Gets an instance of type T.
 		/// </summary>
 		/// <typeparam name="TComponentType"></typeparam>

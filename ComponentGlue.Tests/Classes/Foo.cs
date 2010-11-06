@@ -3,7 +3,6 @@ using ComponentGlue.Framework;
 
 namespace ComponentGlue.Tests.Classes
 {
-	[DefaultComponent(typeof(IFoo))]
 	public class Foo : IFoo
 	{
 		public IBar Bar

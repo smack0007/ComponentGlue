@@ -6,14 +6,7 @@ namespace ComponentGlue.Framework
 	/// Interface for IoC Kernels.
 	/// </summary>
 	public interface IKernel
-	{
-		/// <summary>
-		/// Constructs a new object of type.
-		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
-		object Construct(Type type);
-				
+	{						
 		/// <summary>
 		/// Gets an instance of type.
 		/// </summary>

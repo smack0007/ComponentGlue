@@ -8,14 +8,14 @@ namespace ComponentGlue.Framework
 	public enum BindType
 	{
 		/// <summary>
-		/// The component may be shared with other components.
-		/// </summary>
-		Shared = 0,
-
-		/// <summary>
 		/// A new component will always be constructed.
 		/// </summary>
-		New,
+		Transient = 0,
+
+		/// <summary>
+		/// The component may be shared with other components.
+		/// </summary>
+		Singleton,
 
 		/// <summary>
 		/// The component instance is specified.

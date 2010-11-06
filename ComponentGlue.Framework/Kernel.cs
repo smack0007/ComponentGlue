@@ -52,16 +52,8 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <param name="componentType"></param>
 		/// <returns></returns>
-		public object Construct(Type componentType)
+		private object Construct(Type componentType)
 		{
-			if(componentType.IsInterface)
-			{
-				if(!this.defaultBindings.HasBinding(componentType))
-					throw new InvalidOperationException("No default binding available for the interface " + componentType + ".");
-
-				componentType = this.defaultBindings.GetBinding(componentType).ComponentType;
-			}
-
 			if(componentType.IsAbstract)
 				throw new InvalidOperationException(componentType + " is abstract.");
 
@@ -107,15 +99,33 @@ namespace ComponentGlue.Framework
 		/// <summary>
 		/// Gets an instance of a type.
 		/// </summary>
-		/// <param name="componentType"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
-		public object Get(Type componentType)
+		public object Get(Type type)
 		{
-			if(this.components.ContainsKey(componentType))
-				return this.components[componentType];
+			object component = null;
 
-			object component = Construct(componentType);
-			this.components[componentType] = component;
+			if(type.IsInterface)
+			{
+				// Default bindings
+				if(component == null && this.defaultBindings.HasBinding(type))
+					component = GetComponentByBinding(this.defaultBindings.GetBinding(type));
+
+				// Proxy to parent container if available
+				if(component == null && this.parent != null)
+					component = this.parent.Get(type);
+			}
+			else
+			{
+				if(this.defaultBindings.HasBinding(type))
+					component = GetComponentByBinding(this.defaultBindings.GetBinding(type));
+				else
+					component = Construct(type);
+			}
+
+			if(component == null)
+				throw new InvalidOperationException("Unable to reslove " + type + ".");
+
 			return component;
 		}
 				
@@ -125,26 +135,36 @@ namespace ComponentGlue.Framework
 		/// <param name="interfaceType"></param>
 		/// <param name="binding"></param>
 		/// <returns></returns>
-		private object GetComponentByBinding(Type constructedType, Binding binding)
+		private object GetComponentByBinding(Binding binding)
 		{
 			object component = null;
 
 			switch(binding.Type)
 			{
-				case BindType.Shared:
-					component = Get(binding.ComponentType);
-					break;
-
-				case BindType.New:
+				case BindType.Transient:
 					component = Construct(binding.ComponentType);
 					break;
 
+				case BindType.Singleton:
+					if(!this.components.ContainsKey(binding.InterfaceType))
+					{
+						component = Construct(binding.ComponentType);
+						this.components[binding.InterfaceType] = component;						
+					}
+					else
+					{
+						component = this.components[binding.InterfaceType];
+					}
+
+
+					break;
+									
 				case BindType.Constant:
 					component = binding.Constant;
 					break;
 
 				case BindType.Method:
-					component = binding.Method(constructedType, binding.InterfaceType);
+					component = binding.Method();
 
 					if(!(binding.InterfaceType.IsAssignableFrom(component.GetType())))
 						throw new InvalidOperationException("Factory method did not produce and instance of " + binding.InterfaceType + ".");
@@ -167,11 +187,11 @@ namespace ComponentGlue.Framework
 
 			// Specific bindings
 			if(this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(interfaceType))
-				component = GetComponentByBinding(constructedType, this.componentBindings[constructedType].GetBinding(interfaceType));
+				component = GetComponentByBinding(this.componentBindings[constructedType].GetBinding(interfaceType));
 			
 			// Default bindings
 			if(component == null && this.defaultBindings.HasBinding(interfaceType))
-				component = GetComponentByBinding(constructedType, this.defaultBindings.GetBinding(interfaceType));
+				component = GetComponentByBinding(this.defaultBindings.GetBinding(interfaceType));
 
 			// Proxy to parent container if available
 			if(component == null && this.parent != null)

@@ -5,13 +5,13 @@ namespace ComponentGlue.Framework.BindingSyntax
 	public interface IBindingSyntaxAs
 	{
 		/// <summary>
-		/// Marks a binding as shared. Component will be pulled from cache if available.
+		/// Marks a binding as transient. A new component will always be constructed.
 		/// </summary>
-		void AsShared();
+		void AsTransient();
 
 		/// <summary>
-		/// Marks a binding as new. A new component will always be constructed.
+		/// Marks a binding as a singleton. Component will be pulled from cache if available.
 		/// </summary>
-		void AsNew();
+		void AsSingleton();
 	}
 }

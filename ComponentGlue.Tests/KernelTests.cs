@@ -42,25 +42,25 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void BindTypeAsNewInjectsNewInstanceAlways()
+		public void BindTypeAsTransientInjectsNewInstanceAlways()
 		{
 			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsNew();
+			kernel.Bind<IBar>().To<Bar1>().AsTransient();
 
-			Foo foo1 = kernel.Construct<Foo>();
-			Foo foo2 = kernel.Construct<Foo>();
+			Foo foo1 = kernel.Get<Foo>();
+			Foo foo2 = kernel.Get<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
 
 		[Test]
-		public void BindTypeAsSharedInjectsSameInstanceAlways()
+		public void BindTypeAsSingletonInjectsSameInstanceAlways()
 		{
 			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsShared();
+			kernel.Bind<IBar>().To<Bar1>().AsSingleton();
 
-			Foo foo1 = kernel.Construct<Foo>();
-			Foo foo2 = kernel.Construct<Foo>();
+			Foo foo1 = kernel.Get<Foo>();
+			Foo foo2 = kernel.Get<Foo>();
 
 			Assert.AreSame(foo1.Bar, foo2.Bar);
 		}
@@ -78,14 +78,14 @@ namespace ComponentGlue.Tests
 		public void ConstructAbstractClassThrowsException()
 		{
 			Kernel kernel = new Kernel();
-			kernel.Construct<AbstractClass>();
+			kernel.Get<AbstractClass>();
 		}
 
 		[Test]
 		public void KernelIsBoundToIKernalByDefault()
 		{
 			Kernel kernel = new Kernel();
-			var instance = kernel.Construct<NeedsKernel>();
+			var instance = kernel.Get<NeedsKernel>();
 		}
 
 		[Test]
@@ -126,14 +126,15 @@ namespace ComponentGlue.Tests
 		public void ConstructClassWithUnmarkedDefaultConstructor()
 		{
 			Kernel kernel = new Kernel();
-			var instance = kernel.Construct<DefaultConstructor>();
+			var instance = kernel.Get<DefaultConstructor>();
 			Assert.IsInstanceOf<DefaultConstructor>(instance);
 		}
 
 		[Test]
-		public void MultipleCallsToGetWithSameTypeReturnsSameInstance()
+		public void MultipleCallsToGetWithSingletonTypeReturnsSameInstance()
 		{
 			Kernel kernel = new Kernel();
+			kernel.Bind<DefaultConstructor>().ToSelf().AsSingleton();
 			
 			var instance1 = kernel.Get<DefaultConstructor>();
 			Assert.IsInstanceOf<DefaultConstructor>(instance1);
@@ -152,7 +153,7 @@ namespace ComponentGlue.Tests
 			kernel.Bind<IBar>().To<Bar1>();
 			kernel.For<Foo>().Bind<IBar>().To<Bar2>();
 
-			Foo foo = kernel.Construct<Foo>();
+			Foo foo = kernel.Get<Foo>();
 
 			Assert.IsInstanceOf<Bar2>(foo.Bar);
 		}
@@ -161,11 +162,11 @@ namespace ComponentGlue.Tests
 		public void SpecificBindingWithDifferntBindTypeOverridesDefaultBinding()
 		{
 			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsShared();
-			kernel.For<Foo>().Bind<IBar>().To<Bar2>().AsNew();
+			kernel.Bind<IBar>().To<Bar1>().AsSingleton();
+			kernel.For<Foo>().Bind<IBar>().To<Bar2>().AsTransient();
 
-			Foo foo1 = kernel.Construct<Foo>();
-			Foo foo2 = kernel.Construct<Foo>();
+			Foo foo1 = kernel.Get<Foo>();
+			Foo foo2 = kernel.Get<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -231,7 +232,7 @@ namespace ComponentGlue.Tests
 			IBar bar = new Bar1();
 			kernel.Bind<IBar>().ToConstant(bar);
 
-			Foo foo = kernel.Construct<Foo>();
+			Foo foo = kernel.Get<Foo>();
 			Assert.AreSame(bar, foo.Bar);
 		}
 
@@ -260,9 +261,9 @@ namespace ComponentGlue.Tests
 			bool check = false;
 
 			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().ToMethod((c, i) => { check = true; return new Bar1(); });
+			kernel.Bind<IBar>().ToMethod(() => { check = true; return new Bar1(); });
 
-			kernel.Construct<Foo>();
+			kernel.Get<Foo>();
 
 			Assert.IsTrue(check);
 		}
@@ -272,48 +273,34 @@ namespace ComponentGlue.Tests
 		public void BindToMethodThrowsExceptionWhenFactoryMethodDoesNotReturnCorrectInstance()
 		{
 			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().ToMethod((c, i) => { return new Foo(new Bar1()); });
+			kernel.Bind<IBar>().ToMethod(() => { return new Foo(new Bar1()); });
 
-			kernel.Construct<Foo>();
+			kernel.Get<Foo>();
 		}
 
 		[Test]
 		public void FactoryMethodCalledForEveryNewInstance()
 		{
 			int factoryCount = 0;
-			Func<Type, Type, object> factory = (c, i) => { factoryCount++; return new Bar1(); };
+			Func<object> factory = () => { factoryCount++; return new Bar1(); };
 
 			Kernel kernel = new Kernel();
 			kernel.Bind<IBar>().ToMethod(factory);
 
-			kernel.Construct<Foo>();
-			kernel.Construct<Foo>();
+			kernel.Get<Foo>();
+			kernel.Get<Foo>();
 
 			Assert.AreEqual(2, factoryCount);
-		}
-
-		[Test]
-		public void FactoryMethodReceivesCorrectTypeInformation()
-		{
-			Type constructedType = null, interfaceType = null;
-			Func<Type, Type, object> factory = (c, i) => { constructedType = c; interfaceType = i; return new Bar1(); };
-
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().ToMethod(factory);
-			kernel.Construct<Foo>();
-			
-			Assert.AreEqual(typeof(Foo), constructedType);
-			Assert.AreEqual(typeof(IBar), interfaceType);
 		}
 
 		[Test]
 		public void ChildKernelProxiesToParentKernelWhenChildKernelHasNoBinding()
 		{
 			Kernel parent = new Kernel();
-			parent.Bind<IBaz>().To<Baz1>().AsShared();
+			parent.Bind<IBaz>().To<Baz1>().AsSingleton();
 
 			Kernel child = new Kernel(parent);
-			child.Bind<IBar>().To<Bar3>().AsShared();
+			child.Bind<IBar>().To<Bar3>().AsSingleton();
 
 			Foo foo = child.Get<Foo>();
 
@@ -326,11 +313,11 @@ namespace ComponentGlue.Tests
 		public void ChildKernelDoesNotProxyToParentKernelWhenChildKernelHasBinding()
 		{
 			Kernel parent = new Kernel();
-			parent.Bind<IBaz>().To<Baz1>().AsShared();
+			parent.Bind<IBaz>().To<Baz1>().AsSingleton();
 
 			Kernel child = new Kernel(parent);
-			child.Bind<IBar>().To<Bar3>().AsShared();
-			child.Bind<IBaz>().To<Baz2>().AsShared();
+			child.Bind<IBar>().To<Bar3>().AsSingleton();
+			child.Bind<IBaz>().To<Baz2>().AsSingleton();
 
 			Foo foo = child.Get<Foo>();
 
