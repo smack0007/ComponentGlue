@@ -10,7 +10,7 @@ namespace ComponentGlue.Framework
 		/// <summary>
 		/// A new component will always be constructed.
 		/// </summary>
-		Transient = 0,
+		OncePerRequest = 0,
 
 		/// <summary>
 		/// The component may be shared with other components.
@@ -20,11 +20,6 @@ namespace ComponentGlue.Framework
 		/// <summary>
 		/// The component instance is specified.
 		/// </summary>
-		Constant,
-
-		/// <summary>
-		/// The component will be generated from a factory method.
-		/// </summary>
-		Method
+		Constant
 	}
 }

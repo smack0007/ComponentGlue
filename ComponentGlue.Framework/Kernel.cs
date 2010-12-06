@@ -32,9 +32,6 @@ namespace ComponentGlue.Framework
 			this.components = new Dictionary<Type, object>();
 			this.defaultBindings = new BindingCollection();
 			this.componentBindings = new Dictionary<Type, BindingCollection>();
-
-			Bind(typeof(Kernel)).ToConstant(this);
-			Bind(typeof(IKernel)).ToConstant(this);
 		}
 
 		/// <summary>
@@ -118,9 +115,9 @@ namespace ComponentGlue.Framework
 			else
 			{
 				if(this.defaultBindings.HasBinding(type))
-					component = GetComponentByBinding(this.defaultBindings.GetBinding(type));
+					component = this.GetComponentByBinding(this.defaultBindings.GetBinding(type));
 				else
-					component = Construct(type);
+					component = this.Construct(type);
 			}
 
 			if(component == null)
@@ -141,14 +138,14 @@ namespace ComponentGlue.Framework
 
 			switch(binding.Type)
 			{
-				case BindType.Transient:
-					component = Construct(binding.ComponentType);
+				case BindType.OncePerRequest:
+					component = this.Construct(binding.ComponentType);
 					break;
 
 				case BindType.Singleton:
 					if(!this.components.ContainsKey(binding.InterfaceType))
 					{
-						component = Construct(binding.ComponentType);
+						component = this.Construct(binding.ComponentType);
 						this.components[binding.InterfaceType] = component;						
 					}
 					else
@@ -161,14 +158,6 @@ namespace ComponentGlue.Framework
 									
 				case BindType.Constant:
 					component = binding.Constant;
-					break;
-
-				case BindType.Method:
-					component = binding.Method();
-
-					if(!(binding.InterfaceType.IsAssignableFrom(component.GetType())))
-						throw new InvalidOperationException("Factory method did not produce and instance of " + binding.InterfaceType + ".");
-
 					break;
 			}
 			
@@ -187,11 +176,11 @@ namespace ComponentGlue.Framework
 
 			// Specific bindings
 			if(this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(interfaceType))
-				component = GetComponentByBinding(this.componentBindings[constructedType].GetBinding(interfaceType));
+				component = this.GetComponentByBinding(this.componentBindings[constructedType].GetBinding(interfaceType));
 			
 			// Default bindings
 			if(component == null && this.defaultBindings.HasBinding(interfaceType))
-				component = GetComponentByBinding(this.defaultBindings.GetBinding(interfaceType));
+				component = this.GetComponentByBinding(this.defaultBindings.GetBinding(interfaceType));
 
 			// Proxy to parent container if available
 			if(component == null && this.parent != null)
@@ -280,7 +269,7 @@ namespace ComponentGlue.Framework
 				{
 					if(implementors[interfaceType].Count == 1) // One implementor so we have the default binding
 					{
-						Bind(interfaceType).To(implementors[interfaceType][0]);
+						this.Bind(interfaceType).To(implementors[interfaceType][0]);
 					}
 					else
 					{
@@ -301,9 +290,9 @@ namespace ComponentGlue.Framework
 						}
 
 						if(defaultComponent == null)
-							throw new InvalidOperationException("There exists more than one component for " + interfaceType + " but none are marked as the DefaultComponent.");
+							throw new InvalidOperationException("There exists more than one component for " + interfaceType + " but none are marked as DefaultComponent.");
 
-						Bind(interfaceType).To(defaultComponent);
+						this.Bind(interfaceType).To(defaultComponent);
 					}
 				}
 			}

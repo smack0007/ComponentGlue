@@ -58,7 +58,7 @@ namespace ComponentGlue.Framework
 		{
 			this.InterfaceType = interfaceType;
 			this.ComponentType = interfaceType;
-			this.Type = BindType.Transient;
+			this.Type = BindType.OncePerRequest;
 		}
 
 		public IBindingSyntaxAs To(Type componentType)
@@ -72,12 +72,7 @@ namespace ComponentGlue.Framework
 			this.ComponentType = componentType;
 			return this;
 		}
-
-		public IBindingSyntaxAs To<TComponentType>()
-		{
-			return To(typeof(TComponentType));
-		}
-
+				
 		public IBindingSyntaxAs ToSelf()
 		{
 			this.ComponentType = this.InterfaceType;
@@ -93,23 +88,14 @@ namespace ComponentGlue.Framework
 			this.Constant = value;
 		}
 
-		public void ToMethod(Func<object> factory)
-		{
-			if(factory == null)
-				throw new ArgumentNullException("factory");
-
-			this.Type = BindType.Method;
-			this.Method = factory;
-		}
-
 		public void AsSingleton()
 		{
 			this.Type = BindType.Singleton;
 		}
 
-		public void AsTransient()
+		public void AsOncePerRequest()
 		{
-			this.Type = BindType.Transient;
+			this.Type = BindType.OncePerRequest;
 		}
 	}
 }

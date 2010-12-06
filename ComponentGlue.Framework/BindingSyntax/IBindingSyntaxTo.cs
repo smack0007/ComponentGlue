@@ -22,11 +22,5 @@ namespace ComponentGlue.Framework.BindingSyntax
 		/// </summary>
 		/// <param name="component"></param>
 		void ToConstant(object component);
-
-		/// <summary>
-		/// Sets a factory method which will be used to generate the component.
-		/// </summary>
-		/// <param name="factory"></param>
-		void ToMethod(Func<object> factory);
 	}
 }
