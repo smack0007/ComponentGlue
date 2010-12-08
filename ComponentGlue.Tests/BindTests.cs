@@ -10,13 +10,13 @@ namespace ComponentGlue.Tests
 	public class BindTests
 	{
 		[Test]
-		public void BindTypeAsOncePerRequestInjectsNewInstanceAlways()
+		public void BindTypeAsTransientInjectsNewInstanceAlways()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsOncePerRequest();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>().AsTransient();
 
-			Foo foo1 = kernel.Get<Foo>();
-			Foo foo2 = kernel.Get<Foo>();
+			Foo foo1 = container.Get<Foo>();
+			Foo foo2 = container.Get<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -24,11 +24,11 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void BindTypeAsSingletonInjectsSameInstanceAlways()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsSingleton();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>().AsSingleton();
 
-			Foo foo1 = kernel.Get<Foo>();
-			Foo foo2 = kernel.Get<Foo>();
+			Foo foo1 = container.Get<Foo>();
+			Foo foo2 = container.Get<Foo>();
 
 			Assert.AreSame(foo1.Bar, foo2.Bar);
 		}
@@ -36,52 +36,52 @@ namespace ComponentGlue.Tests
 		[Test, ExpectedException]
 		public void BindTypeWhichDoesNotImplementInterfaceThrowsException()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Foo>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Foo>();
 		}
 
 		[Test]
 		public void HasBindingReturnsTrueWhenBindingExists()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IFoo>().To<Foo>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IFoo>().To<Foo>();
 
-			Assert.IsTrue(kernel.HasBinding<IFoo>());
+			Assert.IsTrue(container.HasBinding<IFoo>());
 		}
 
 		[Test]
 		public void HasBindingReturnsFalseWhenBindingDoesNotExist()
 		{
-			Kernel kernel = new Kernel();
+			ComponentContainer container = new ComponentContainer();
 
-			Assert.IsFalse(kernel.HasBinding<IFoo>());
+			Assert.IsFalse(container.HasBinding<IFoo>());
 		}
 
 		[Test]
 		public void RebindAddsBindingWhenBindingDoesNotAlreadyExist()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Rebind<IFoo>().To<Foo>();
+			ComponentContainer container = new ComponentContainer();
+			container.Rebind<IFoo>().To<Foo>();
 
-			Assert.IsTrue(kernel.HasBinding<IFoo>());
+			Assert.IsTrue(container.HasBinding<IFoo>());
 		}
 
 		[Test]
 		public void RebindDoesNotThrowExceptionWhenBindingAlreadyExists()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>();
-			kernel.Rebind<IBar>().To<Bar2>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>();
+			container.Rebind<IBar>().To<Bar2>();
 		}
 
 		[Test]
 		public void SpecificBindingOverridesDefaultBinding()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>();
-			kernel.For<Foo>().Bind<IBar>().To<Bar2>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>();
+			container.For<Foo>().Bind<IBar>().To<Bar2>();
 
-			Foo foo = kernel.Get<Foo>();
+			Foo foo = container.Get<Foo>();
 
 			Assert.IsInstanceOf<Bar2>(foo.Bar);
 		}
@@ -89,12 +89,12 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void SpecificBindingWithDifferntBindTypeOverridesDefaultBinding()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>().AsSingleton();
-			kernel.For<Foo>().Bind<IBar>().To<Bar2>().AsOncePerRequest();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>().AsSingleton();
+			container.For<Foo>().Bind<IBar>().To<Bar2>().AsTransient();
 
-			Foo foo1 = kernel.Get<Foo>();
-			Foo foo2 = kernel.Get<Foo>();
+			Foo foo1 = container.Get<Foo>();
+			Foo foo2 = container.Get<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -102,31 +102,31 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void BindToConstantDoesNotConstructNewInstance()
 		{
-			Kernel kernel = new Kernel();
+			ComponentContainer container = new ComponentContainer();
 
 			IBar bar = new Bar1();
-			kernel.Bind<IBar>().ToConstant(bar);
+			container.Bind<IBar>().ToConstant(bar);
 
-			Foo foo = kernel.Get<Foo>();
+			Foo foo = container.Get<Foo>();
 			Assert.AreSame(bar, foo.Bar);
 		}
 
 		[Test, ExpectedException]
 		public void BindToConstantWhereComponentNotNullAndIsNotInstanceOfTypeThrowsException()
 		{
-			Kernel kernel = new Kernel();
+			ComponentContainer container = new ComponentContainer();
 
 			IBar bar = new Bar1();
 			IFoo foo = new Foo(bar);
 
-			kernel.Bind<IBar>().ToConstant(foo);
+			container.Bind<IBar>().ToConstant(foo);
 		}
 
 		[Test]
 		public void BindToConstantWhereComponentIsNullDoesNotThrowException()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().ToConstant(null);
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().ToConstant(null);
 		}
 	}
 }

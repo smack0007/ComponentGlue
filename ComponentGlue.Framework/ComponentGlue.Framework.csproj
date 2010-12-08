@@ -40,16 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binding.cs" />
-    <Compile Include="BindingCollection.cs" />
+    <Compile Include="ComponentBinding.cs" />
+    <Compile Include="ComponentBindingCollection.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxFor.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxRoot.cs" />
-    <Compile Include="BindType.cs" />
+    <Compile Include="ComponentBindType.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="IKernel.cs" />
-    <Compile Include="InjectAttribute.cs" />
-    <Compile Include="Kernel.cs" />
+    <Compile Include="IComponentContainer.cs" />
+    <Compile Include="InjectComponentAttribute.cs" />
+    <Compile Include="ComponentContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxAs.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxBind.cs" />

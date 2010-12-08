@@ -5,18 +5,20 @@ using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
-	public class Kernel : IKernel, IDisposable, IBindingSyntaxRoot
+	public class ComponentContainer : IComponentContainer, IDisposable, IBindingSyntaxRoot
 	{
-		Kernel parent;
+		ComponentContainer parent;
 
 		Dictionary<Type, object> components;
-		BindingCollection defaultBindings;
-		Dictionary<Type, BindingCollection> componentBindings;
+		ComponentBindingCollection defaultBindings;
+		Dictionary<Type, ComponentBindingCollection> componentBindings;
+
+		Stack<Type> constructStack;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public Kernel()
+		public ComponentContainer()
 			: this(null)
 		{
 		}
@@ -24,14 +26,19 @@ namespace ComponentGlue.Framework
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="parent">A parent kernel.</param>
-		public Kernel(Kernel parent)
+		/// <param name="parent">A parent container.</param>
+		public ComponentContainer(ComponentContainer parent)
 		{
 			this.parent = parent;
 
 			this.components = new Dictionary<Type, object>();
-			this.defaultBindings = new BindingCollection();
-			this.componentBindings = new Dictionary<Type, BindingCollection>();
+			this.defaultBindings = new ComponentBindingCollection();
+			this.componentBindings = new Dictionary<Type, ComponentBindingCollection>();
+
+			this.constructStack = new Stack<Type>();
+
+			this.Bind(typeof(ComponentContainer)).ToConstant(this);
+			this.Bind(typeof(IComponentContainer)).ToConstant(this);
 		}
 
 		/// <summary>
@@ -54,43 +61,53 @@ namespace ComponentGlue.Framework
 			if(componentType.IsAbstract)
 				throw new InvalidOperationException(componentType + " is abstract.");
 
-			ConstructorInfo defaultConstructor = null;
+			if(this.constructStack.Contains(componentType))
+				throw new InvalidOperationException("Possible infinite construction loop detected.");
+
+			this.constructStack.Push(componentType);
+
 			ConstructorInfo injectableConstructor = null;
-			foreach(ConstructorInfo constructor in componentType.GetConstructors())
+			ConstructorInfo[] constructors = componentType.GetConstructors();
+
+			if(constructors.Length == 1)
 			{
-				if(constructor.GetParameters().Length == 0)
-					defaultConstructor = constructor;
-
-				foreach(Attribute attribute in constructor.GetCustomAttributes(true))
+				injectableConstructor = constructors[0];
+			}
+			else
+			{
+				foreach(ConstructorInfo constructor in constructors)
 				{
-					if(attribute is InjectAttribute)
-					{
-						if(injectableConstructor != null)
-							throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType + ".");
-
+					if(constructor.GetParameters().Length == 0)
 						injectableConstructor = constructor;
+
+					foreach(Attribute attribute in constructor.GetCustomAttributes(true))
+					{
+						if(attribute is InjectComponentAttribute)
+						{
+							if(injectableConstructor != null)
+								throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType + ".");
+
+							injectableConstructor = constructor;
+						}
 					}
 				}
 			}
 
-			if(defaultConstructor == null && injectableConstructor == null)
+			if(injectableConstructor == null)
 				throw new InvalidOperationException("No injectable or default constructor found for type " + componentType + ".");
 
-			if(injectableConstructor != null)
-			{
-				ParameterInfo[] parameters = injectableConstructor.GetParameters();
-				object[] injectComponents = new object[parameters.Length];
+			ParameterInfo[] parameters = injectableConstructor.GetParameters();
+			object[] injectComponents = new object[parameters.Length];
 
-				int i = 0;
-				foreach(ParameterInfo parameter in parameters)
-					injectComponents[i++] = GetComponentForInjection(componentType, parameter.ParameterType);
+			int i = 0;
+			foreach(ParameterInfo parameter in parameters)
+				injectComponents[i++] = this.GetComponentForInjection(componentType, parameter.ParameterType);
 
-				return injectableConstructor.Invoke(injectComponents);
-			}
-			else
-			{
-				return defaultConstructor.Invoke(null);
-			}
+			object obj = injectableConstructor.Invoke(injectComponents);
+
+			this.constructStack.Pop();
+
+			return obj;
 		}
 								
 		/// <summary>
@@ -132,17 +149,17 @@ namespace ComponentGlue.Framework
 		/// <param name="interfaceType"></param>
 		/// <param name="binding"></param>
 		/// <returns></returns>
-		private object GetComponentByBinding(Binding binding)
+		private object GetComponentByBinding(ComponentBinding binding)
 		{
 			object component = null;
 
 			switch(binding.Type)
 			{
-				case BindType.OncePerRequest:
+				case ComponentBindType.Transient:
 					component = this.Construct(binding.ComponentType);
 					break;
 
-				case BindType.Singleton:
+				case ComponentBindType.Singleton:
 					if(!this.components.ContainsKey(binding.InterfaceType))
 					{
 						component = this.Construct(binding.ComponentType);
@@ -156,7 +173,7 @@ namespace ComponentGlue.Framework
 
 					break;
 									
-				case BindType.Constant:
+				case ComponentBindType.Constant:
 					component = binding.Constant;
 					break;
 			}
@@ -188,7 +205,7 @@ namespace ComponentGlue.Framework
 
 			// Component not found
 			if(component == null)
-				throw new InvalidOperationException("Failed to get component of type " + interfaceType + " for injection into " + constructedType + ".");
+				component = this.Construct(interfaceType);
 
 			return component;
 		}
@@ -205,7 +222,7 @@ namespace ComponentGlue.Framework
 			{
 				foreach(Attribute attribute in property.GetCustomAttributes(true))
 				{
-					if(attribute is InjectAttribute)
+					if(attribute is InjectComponentAttribute)
 					{
 						if(!property.CanWrite)
 							throw new InvalidOperationException(property.Name + " is marked as Inject but not writable.");
@@ -219,7 +236,7 @@ namespace ComponentGlue.Framework
 		public IBindingSyntaxBind For(Type constructedType)
 		{
 			if(!this.componentBindings.ContainsKey(constructedType))
-				this.componentBindings.Add(constructedType, new BindingCollection());
+				this.componentBindings.Add(constructedType, new ComponentBindingCollection());
 
 			return this.componentBindings[constructedType];
 		}
@@ -288,11 +305,9 @@ namespace ComponentGlue.Framework
 								}
 							}
 						}
-
-						if(defaultComponent == null)
-							throw new InvalidOperationException("There exists more than one component for " + interfaceType + " but none are marked as DefaultComponent.");
-
-						this.Bind(interfaceType).To(defaultComponent);
+						
+						if(defaultComponent != null)
+							this.Bind(interfaceType).To(defaultComponent);
 					}
 				}
 			}

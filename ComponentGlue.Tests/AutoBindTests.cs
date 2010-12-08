@@ -12,33 +12,44 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void AutoBindBindsCorrectlyForInterfacesWithOneImplementor()
 		{
-			Kernel kernel = new Kernel();
-			kernel.AutoBind(Assembly.GetExecutingAssembly());
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly());
 
-			Assert.IsTrue(kernel.HasBinding<ISimple>());
-			Assert.IsInstanceOf(typeof(ISimple), kernel.Get<ISimple>());
+			Assert.IsTrue(container.HasBinding<ISimple>());
+			Assert.IsInstanceOf(typeof(ISimple), container.Get<ISimple>());
 		}
 
 		[Test]
 		public void AutoBindBindsCorrectlyForInterfacesWithMultipleImplementors()
 		{
-			Kernel kernel = new Kernel();
-			kernel.AutoBind(Assembly.GetExecutingAssembly());
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly());
 
-			Assert.IsTrue(kernel.HasBinding<IBaz>());
-			Assert.IsInstanceOf(typeof(Baz1), kernel.Get<IBaz>());
+			Assert.IsTrue(container.HasBinding<IBaz>());
+			Assert.IsInstanceOf(typeof(Baz1), container.Get<IBaz>());
 		}
 
 		[Test]
 		public void AfterAutoBindFooCanBeResolved()
 		{
-			Kernel kernel = new Kernel();
-			kernel.AutoBind(Assembly.GetExecutingAssembly());
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly());
 
-			IFoo foo = kernel.Get<IFoo>();
+			IFoo foo = container.Get<IFoo>();
 			Assert.IsInstanceOf(typeof(Foo), foo);
 			Assert.IsInstanceOf(typeof(Bar3), ((Foo)foo).Bar);
 			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)((Foo)foo).Bar).Baz);
+		}
+
+		[Test]
+		public void AfterAutoBindConcreteABCanBeResolved()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly());
+
+			ConcreteAB ab = container.Get<ConcreteAB>();
+			Assert.NotNull(ab.A);
+			Assert.NotNull(ab.B);
 		}
 	}
 }

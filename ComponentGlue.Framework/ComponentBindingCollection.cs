@@ -5,16 +5,16 @@ using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
-	public class BindingCollection : IBindingSyntaxBind
+	public class ComponentBindingCollection : IBindingSyntaxBind
 	{
-		Dictionary<Type, Binding> bindings;
+		Dictionary<Type, ComponentBinding> bindings;
 
-		public BindingCollection()
+		public ComponentBindingCollection()
 		{
-			this.bindings = new Dictionary<Type, Binding>();
+			this.bindings = new Dictionary<Type, ComponentBinding>();
 		}
 		
-		public Binding GetBinding(Type interfaceType)
+		public ComponentBinding GetBinding(Type interfaceType)
 		{
 			if(!this.bindings.ContainsKey(interfaceType))
 				throw new InvalidOperationException("No binding for interface type " + interfaceType);
@@ -27,7 +27,7 @@ namespace ComponentGlue.Framework
 			if(this.bindings.ContainsKey(interfaceType))
 				throw new InvalidOperationException("A binding has already been provided for the interface type " + interfaceType);
 
-			Binding binding = new Binding(interfaceType);
+			ComponentBinding binding = new ComponentBinding(interfaceType);
 			this.bindings.Add(interfaceType, binding);
 
 			return binding;
@@ -42,7 +42,7 @@ namespace ComponentGlue.Framework
 		{
 			if(!this.bindings.ContainsKey(interfaceType))
 			{
-				Binding binding = new Binding(interfaceType);
+				ComponentBinding binding = new ComponentBinding(interfaceType);
 				this.bindings.Add(interfaceType, binding);
 			}
 

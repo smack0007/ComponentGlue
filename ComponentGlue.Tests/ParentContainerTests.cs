@@ -7,15 +7,15 @@ using ComponentGlue.Tests.Classes;
 namespace ComponentGlue.Tests
 {
 	[TestFixture]
-	public class ChildKernelTests
+	public class ParentContainerTests
 	{
 		[Test]
-		public void ChildKernelProxiesToParentKernelWhenChildKernelHasNoBinding()
+		public void ChildContainerProxiesToParentContainerWhenChildContainerHasNoBinding()
 		{
-			Kernel parent = new Kernel();
+			ComponentContainer parent = new ComponentContainer();
 			parent.Bind<IBaz>().To<Baz1>().AsSingleton();
 
-			Kernel child = new Kernel(parent);
+			ComponentContainer child = new ComponentContainer(parent);
 			child.Bind<IBar>().To<Bar3>().AsSingleton();
 
 			Foo foo = child.Get<Foo>();
@@ -26,12 +26,12 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void ChildKernelDoesNotProxyToParentKernelWhenChildKernelHasBinding()
+		public void ChildContainerDoesNotProxyToParentContainerWhenChildContainerHasBinding()
 		{
-			Kernel parent = new Kernel();
+			ComponentContainer parent = new ComponentContainer();
 			parent.Bind<IBaz>().To<Baz1>().AsSingleton();
 
-			Kernel child = new Kernel(parent);
+			ComponentContainer child = new ComponentContainer(parent);
 			child.Bind<IBar>().To<Bar3>().AsSingleton();
 			child.Bind<IBaz>().To<Baz2>().AsSingleton();
 

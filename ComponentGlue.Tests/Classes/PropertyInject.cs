@@ -5,14 +5,14 @@ namespace ComponentGlue.Tests.Classes
 {
 	public class PropertyInject
 	{
-		[Inject]
+		[InjectComponent]
 		public IFoo Foo
 		{
 			get;
 			private set;
 		}
 
-		[Inject]
+		[InjectComponent]
 		public IBar Bar
 		{
 			get;

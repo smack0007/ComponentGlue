@@ -10,9 +10,9 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <typeparam name="TComponentType"></typeparam>
 		/// <returns></returns>
-		public static TComponentType Get<TComponentType>(this IKernel kernel)
+		public static TComponentType Get<TComponentType>(this IComponentContainer container)
 		{
-			return (TComponentType)kernel.Get(typeof(TComponentType));
+			return (TComponentType)container.Get(typeof(TComponentType));
 		}
 
 		/// <summary>
@@ -20,9 +20,9 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <param name="constructedType"></param>
 		/// <returns></returns>
-		public static IBindingSyntaxBind For<TConstructedType>(this IBindingSyntaxFor kernel)
+		public static IBindingSyntaxBind For<TConstructedType>(this IBindingSyntaxFor container)
 		{
-			return kernel.For(typeof(TConstructedType));
+			return container.For(typeof(TConstructedType));
 		}
 
 		/// <summary>
@@ -30,20 +30,20 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <typeparam name="TComponentType"></typeparam>
 		/// <returns></returns>
-		public static IBindingSyntaxAs To<TComponentType>(this IBindingSyntaxTo kernel)
+		public static IBindingSyntaxAs To<TComponentType>(this IBindingSyntaxTo container)
 		{
-			return kernel.To(typeof(TComponentType));
+			return container.To(typeof(TComponentType));
 		}
 
 		/// <summary>
 		/// Adds a binding.
 		/// </summary>
 		/// <typeparam name="TInterfaceType"></typeparam>
-		/// <param name="kernel"></param>
+		/// <param name="container"></param>
 		/// <returns></returns>
-		public static IBindingSyntaxTo Bind<TInterfaceType>(this IBindingSyntaxBind kernel)
+		public static IBindingSyntaxTo Bind<TInterfaceType>(this IBindingSyntaxBind container)
 		{
-			return kernel.Bind(typeof(TInterfaceType));
+			return container.Bind(typeof(TInterfaceType));
 		}
 
 		/// <summary>
@@ -51,9 +51,9 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <typeparam name="TInterfaceType"></typeparam>
 		/// <returns></returns>
-		public static bool HasBinding<TInterfaceType>(this IBindingSyntaxBind kernel)
+		public static bool HasBinding<TInterfaceType>(this IBindingSyntaxBind container)
 		{
-			return kernel.HasBinding(typeof(TInterfaceType));
+			return container.HasBinding(typeof(TInterfaceType));
 		}
 
 		/// <summary>
@@ -61,9 +61,9 @@ namespace ComponentGlue.Framework
 		/// </summary>
 		/// <typeparam name="TInterfaceType"></typeparam>
 		/// <returns></returns>
-		public static IBindingSyntaxTo Rebind<TInterfaceType>(this IBindingSyntaxBind kernel)
+		public static IBindingSyntaxTo Rebind<TInterfaceType>(this IBindingSyntaxBind container)
 		{
-			return kernel.Rebind(typeof(TInterfaceType));
+			return container.Rebind(typeof(TInterfaceType));
 		}
 
 

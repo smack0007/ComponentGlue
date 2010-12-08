@@ -5,9 +5,9 @@ namespace ComponentGlue.Framework.BindingSyntax
 	public interface IBindingSyntaxAs
 	{
 		/// <summary>
-		/// Marks a binding as OncePerRequest. A new component will always be constructed.
+		/// Marks a binding as Transient. A new component will always be constructed.
 		/// </summary>
-		void AsOncePerRequest();
+		void AsTransient();
 
 		/// <summary>
 		/// Marks a binding as Singleton. Component will be pulled from cache if available.

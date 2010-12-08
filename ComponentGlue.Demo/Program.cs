@@ -7,10 +7,10 @@ namespace ComponentGlue.Demo
 	{
 		public static void Main(string[] args)
 		{
-			Kernel kernel = new Kernel();
-			kernel.AutoBind();
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind();
 
-			IFoo foo = kernel.Get<IFoo>();
+			IFoo foo = container.Get<IFoo>();
 		}
 	}
 }

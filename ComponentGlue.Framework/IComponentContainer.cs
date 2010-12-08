@@ -3,9 +3,9 @@
 namespace ComponentGlue.Framework
 {
 	/// <summary>
-	/// Interface for IoC Kernels.
+	/// Interface for IoC Containers.
 	/// </summary>
-	public interface IKernel
+	public interface IComponentContainer
 	{						
 		/// <summary>
 		/// Gets an instance of type.

@@ -3,18 +3,18 @@ using ComponentGlue.Framework;
 
 namespace ComponentGlue.Tests.Classes
 {
-	public class Foo : IFoo
+	public class NeedsContainer
 	{
-		public IBar Bar
+		public IComponentContainer Container
 		{
 			get;
 			private set;
 		}
-		
+
 		[InjectComponent]
-		public Foo(IBar bar)
+		public NeedsContainer(IComponentContainer container)
 		{
-			this.Bar = bar;
+			this.Container = container;
 		}
 	}
 }

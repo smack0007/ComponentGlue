@@ -3,7 +3,7 @@ using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
-	public class Binding : IBindingSyntaxTo, IBindingSyntaxAs
+	public class ComponentBinding : IBindingSyntaxTo, IBindingSyntaxAs
 	{
 		/// <summary>
 		/// The type of interface which is bound.
@@ -26,7 +26,7 @@ namespace ComponentGlue.Framework
 		/// <summary>
 		/// The type of binding.
 		/// </summary>
-		public BindType Type
+		public ComponentBindType Type
 		{
 			get;
 			private set;
@@ -54,11 +54,11 @@ namespace ComponentGlue.Framework
 		/// Constructor.
 		/// </summary>
 		/// <param name="interfaceType"></param>
-		public Binding(Type interfaceType)
+		public ComponentBinding(Type interfaceType)
 		{
 			this.InterfaceType = interfaceType;
 			this.ComponentType = interfaceType;
-			this.Type = BindType.OncePerRequest;
+			this.Type = ComponentBindType.Transient;
 		}
 
 		public IBindingSyntaxAs To(Type componentType)
@@ -84,18 +84,18 @@ namespace ComponentGlue.Framework
 			if(value != null && !this.InterfaceType.IsAssignableFrom(value.GetType()))
 				throw new InvalidOperationException("Value is not an instance of " + this.ComponentType);
 
-			this.Type = BindType.Constant;
+			this.Type = ComponentBindType.Constant;
 			this.Constant = value;
 		}
 
 		public void AsSingleton()
 		{
-			this.Type = BindType.Singleton;
+			this.Type = ComponentBindType.Singleton;
 		}
 
-		public void AsOncePerRequest()
+		public void AsTransient()
 		{
-			this.Type = BindType.OncePerRequest;
+			this.Type = ComponentBindType.Transient;
 		}
 	}
 }

@@ -43,7 +43,12 @@
   <ItemGroup>
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="BindTests.cs" />
-    <Compile Include="ChildKernelTests.cs" />
+    <Compile Include="Classes\CircularDependency1.cs" />
+    <Compile Include="Classes\CircularDependency2.cs" />
+    <Compile Include="Classes\ConcreteA.cs" />
+    <Compile Include="Classes\ConcreteAB.cs" />
+    <Compile Include="Classes\ConcreteB.cs" />
+    <Compile Include="ParentContainerTests.cs" />
     <Compile Include="Classes\AbstractClass.cs" />
     <Compile Include="Classes\Bar1.cs" />
     <Compile Include="Classes\Bar2.cs" />
@@ -59,7 +64,7 @@
     <Compile Include="Classes\Simple.cs" />
     <Compile Include="GetTests.cs" />
     <Compile Include="InjectTests.cs" />
-    <Compile Include="Classes\NeedsKernel.cs" />
+    <Compile Include="Classes\NeedsContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\PropertyInject.cs" />
   </ItemGroup>

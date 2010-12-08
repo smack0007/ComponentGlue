@@ -7,17 +7,17 @@ using ComponentGlue.Tests.Classes;
 namespace ComponentGlue.Tests
 {
 	[TestFixture]
-	public class InjectsTests
+	public class InjectTests
 	{
 		[Test]
 		public void InjectPropertiesWithDefaultBindings()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IFoo>().To<Foo>();
-			kernel.Bind<IBar>().To<Bar2>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IBar>().To<Bar2>();
 
 			var instance = new PropertyInject();
-			kernel.Inject(instance);
+			container.Inject(instance);
 
 			Assert.NotNull(instance.Foo);
 			Assert.IsInstanceOf<Foo>(instance.Foo);
@@ -29,13 +29,13 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void InjectPropertiesWithSpecificBindings()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IBar>().To<Bar1>();
-			kernel.For<PropertyInject>().Bind<IFoo>().To<Foo>();
-			kernel.For<PropertyInject>().Bind<IBar>().To<Bar2>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>();
+			container.For<PropertyInject>().Bind<IFoo>().To<Foo>();
+			container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
 			var instance = new PropertyInject();
-			kernel.Inject(instance);
+			container.Inject(instance);
 
 			Assert.NotNull(instance.Foo);
 			Assert.IsInstanceOf<Foo>(instance.Foo);
@@ -47,13 +47,13 @@ namespace ComponentGlue.Tests
 		[Test]
 		public void InjectPropertiesWithSpecificBindingsOverrideDefaultBindings()
 		{
-			Kernel kernel = new Kernel();
-			kernel.Bind<IFoo>().To<Foo>();
-			kernel.Bind<IBar>().To<Bar1>();
-			kernel.For<PropertyInject>().Bind<IBar>().To<Bar2>();
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IBar>().To<Bar1>();
+			container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
 			var instance = new PropertyInject();
-			kernel.Inject(instance);
+			container.Inject(instance);
 
 			Assert.NotNull(instance.Foo);
 			Assert.IsInstanceOf<Foo>(instance.Foo);
