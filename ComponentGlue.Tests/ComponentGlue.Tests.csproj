@@ -45,6 +45,8 @@
     <Compile Include="BindTests.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
     <Compile Include="Classes\CircularDependency2.cs" />
+    <Compile Include="Classes\CircularDependencyProperty1.cs" />
+    <Compile Include="Classes\CircularDependencyProperty2.cs" />
     <Compile Include="Classes\ConcreteA.cs" />
     <Compile Include="Classes\ConcreteAB.cs" />
     <Compile Include="Classes\ConcreteB.cs" />

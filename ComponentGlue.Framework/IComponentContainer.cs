@@ -1,11 +1,12 @@
 ﻿using System;
+using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
 	/// <summary>
 	/// Interface for IoC Containers.
 	/// </summary>
-	public interface IComponentContainer
+	public interface IComponentContainer : IBindingSyntaxRoot
 	{						
 		/// <summary>
 		/// Gets an instance of type.

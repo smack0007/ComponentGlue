@@ -48,7 +48,7 @@
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IComponentContainer.cs" />
-    <Compile Include="InjectComponentAttribute.cs" />
+    <Compile Include="InjectAttribute.cs" />
     <Compile Include="ComponentContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxAs.cs" />

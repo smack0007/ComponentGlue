@@ -5,7 +5,7 @@ using ComponentGlue.Framework.BindingSyntax;
 
 namespace ComponentGlue.Framework
 {
-	public class ComponentContainer : IComponentContainer, IDisposable, IBindingSyntaxRoot
+	public class ComponentContainer : IComponentContainer, IDisposable
 	{
 		ComponentContainer parent;
 
@@ -82,7 +82,7 @@ namespace ComponentGlue.Framework
 
 					foreach(Attribute attribute in constructor.GetCustomAttributes(true))
 					{
-						if(attribute is InjectComponentAttribute)
+						if(attribute is InjectAttribute)
 						{
 							if(injectableConstructor != null)
 								throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType + ".");
@@ -122,19 +122,22 @@ namespace ComponentGlue.Framework
 			if(type.IsInterface)
 			{
 				// Default bindings
-				if(component == null && this.defaultBindings.HasBinding(type))
+				if(this.defaultBindings.HasBinding(type))
 					component = GetComponentByBinding(this.defaultBindings.GetBinding(type));
-
-				// Proxy to parent container if available
-				if(component == null && this.parent != null)
+				else if(this.parent != null) // Proxy to parent container if available
 					component = this.parent.Get(type);
 			}
 			else
 			{
 				if(this.defaultBindings.HasBinding(type))
+				{
 					component = this.GetComponentByBinding(this.defaultBindings.GetBinding(type));
+				}
 				else
+				{
 					component = this.Construct(type);
+					this.Inject(component);
+				}
 			}
 
 			if(component == null)
@@ -157,20 +160,20 @@ namespace ComponentGlue.Framework
 			{
 				case ComponentBindType.Transient:
 					component = this.Construct(binding.ComponentType);
+					this.Inject(component);
 					break;
 
 				case ComponentBindType.Singleton:
 					if(!this.components.ContainsKey(binding.InterfaceType))
 					{
 						component = this.Construct(binding.ComponentType);
-						this.components[binding.InterfaceType] = component;						
+						this.components[binding.InterfaceType] = component;
+						this.Inject(component);
 					}
 					else
 					{
 						component = this.components[binding.InterfaceType];
 					}
-
-
 					break;
 									
 				case ComponentBindType.Constant:
@@ -222,7 +225,7 @@ namespace ComponentGlue.Framework
 			{
 				foreach(Attribute attribute in property.GetCustomAttributes(true))
 				{
-					if(attribute is InjectComponentAttribute)
+					if(attribute is InjectAttribute)
 					{
 						if(!property.CanWrite)
 							throw new InvalidOperationException(property.Name + " is marked as Inject but not writable.");

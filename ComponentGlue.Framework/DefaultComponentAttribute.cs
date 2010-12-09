@@ -3,7 +3,7 @@
 namespace ComponentGlue.Framework
 {
 	/// <summary>
-	/// Marks a class as the default 
+	/// Marks a class as the default component.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=true, Inherited=false)]
 	public class DefaultComponentAttribute : Attribute

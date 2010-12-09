@@ -3,11 +3,13 @@ using ComponentGlue.Framework;
 
 namespace ComponentGlue.Tests.Classes
 {
-	public class Bar2 : IBar
+	public class CircularDependencyProperty2
 	{
 		[Inject]
-		public Bar2()
+		public CircularDependencyProperty1 Dependency
 		{
+			get;
+			private set;
 		}
 	}
 }

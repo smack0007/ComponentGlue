@@ -12,7 +12,7 @@ namespace ComponentGlue.Tests.Classes
 			private set;
 		}
 
-		[InjectComponent]
+		[Inject]
 		public Bar3(IBaz baz)
 		{
 			this.Baz = baz;

@@ -11,7 +11,7 @@ namespace ComponentGlue.Demo
 			private set;
 		}
 		
-		[InjectComponent]
+		[Inject]
 		public Foo(IBar bar)
 		{
 			this.Bar = bar;

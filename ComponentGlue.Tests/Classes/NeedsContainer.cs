@@ -11,7 +11,7 @@ namespace ComponentGlue.Tests.Classes
 			private set;
 		}
 
-		[InjectComponent]
+		[Inject]
 		public NeedsContainer(IComponentContainer container)
 		{
 			this.Container = container;

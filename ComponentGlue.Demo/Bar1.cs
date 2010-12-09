@@ -5,7 +5,7 @@ namespace ComponentGlue.Demo
 {
 	public class Bar1 : IBar
 	{
-		[InjectComponent]
+		[Inject]
 		public Bar1()
 		{
 		}
