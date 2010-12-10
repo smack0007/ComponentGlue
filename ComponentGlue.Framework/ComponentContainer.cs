@@ -59,10 +59,10 @@ namespace ComponentGlue.Framework
 		private object Construct(Type componentType)
 		{
 			if(componentType.IsAbstract)
-				throw new InvalidOperationException(componentType + " is abstract.");
+				throw new ComponentResolutionException(componentType + " is abstract.");
 
 			if(this.constructStack.Contains(componentType))
-				throw new InvalidOperationException("Possible infinite construction loop detected.");
+				throw new ComponentResolutionException("Possible infinite construction loop detected.");
 
 			this.constructStack.Push(componentType);
 
@@ -85,7 +85,7 @@ namespace ComponentGlue.Framework
 						if(attribute is InjectAttribute)
 						{
 							if(injectableConstructor != null)
-								throw new InvalidOperationException("Multiple injectable constructors found for type " + componentType + ".");
+								throw new ComponentResolutionException("Multiple injectable constructors found for type " + componentType + ".");
 
 							injectableConstructor = constructor;
 						}
@@ -94,7 +94,7 @@ namespace ComponentGlue.Framework
 			}
 
 			if(injectableConstructor == null)
-				throw new InvalidOperationException("No injectable or default constructor found for type " + componentType + ".");
+				throw new ComponentResolutionException("No injectable or default constructor found for type " + componentType + ".");
 
 			ParameterInfo[] parameters = injectableConstructor.GetParameters();
 			object[] injectComponents = new object[parameters.Length];
@@ -141,7 +141,7 @@ namespace ComponentGlue.Framework
 			}
 
 			if(component == null)
-				throw new InvalidOperationException("Unable to reslove " + type + ".");
+				throw new ComponentResolutionException("Unable to reslove " + type + ".");
 
 			return component;
 		}
@@ -228,7 +228,7 @@ namespace ComponentGlue.Framework
 					if(attribute is InjectAttribute)
 					{
 						if(!property.CanWrite)
-							throw new InvalidOperationException(property.Name + " is marked as Inject but not writable.");
+							throw new ComponentResolutionException(property.Name + " is marked as Inject but not writable.");
 
 						property.SetValue(instance, GetComponentForInjection(type, property.PropertyType), null);
 					}
@@ -258,13 +258,37 @@ namespace ComponentGlue.Framework
 		{
 			return this.defaultBindings.Rebind(interfaceType);
 		}
-				
+		
+		/// <summary>
+		/// Performs auto binding on all the types in the Entry Assembly as Transient.
+		/// </summary>
 		public void AutoBind()
 		{
-			AutoBind(Assembly.GetEntryAssembly());
+			AutoBind(Assembly.GetEntryAssembly(), ComponentBindType.Transient);
 		}
 
+		/// <summary>
+		/// Performs auto binding on all the types in the entry Assembly as the given bind type.
+		/// </summary>
+		public void AutoBind(ComponentBindType bindType)
+		{
+			AutoBind(Assembly.GetEntryAssembly(), bindType);
+		}
+
+		/// <summary>
+		/// Performs auto binding on all the types in the given assembly as Transient.
+		/// </summary>
 		public void AutoBind(Assembly assembly)
+		{
+			AutoBind(assembly, ComponentBindType.Transient);
+		}
+
+		/// <summary>
+		/// Performs auto binding on all they types in the given assemly as the given bind type.
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="bindType"></param>
+		public void AutoBind(Assembly assembly, ComponentBindType bindType)
 		{
 			Dictionary<Type, List<Type>> implementors = new Dictionary<Type,List<Type>>();
 
@@ -289,7 +313,7 @@ namespace ComponentGlue.Framework
 				{
 					if(implementors[interfaceType].Count == 1) // One implementor so we have the default binding
 					{
-						this.Bind(interfaceType).To(implementors[interfaceType][0]);
+						this.Bind(interfaceType).To(implementors[interfaceType][0]).As(bindType);
 					}
 					else
 					{
@@ -302,7 +326,7 @@ namespace ComponentGlue.Framework
 								if(attribute.InterfaceType == interfaceType)
 								{
 									if(defaultComponent != null)
-										throw new InvalidOperationException("More than one component is marked as DefaultComponent for " + interfaceType + ".");
+										throw new ComponentResolutionException("More than one component is marked as DefaultComponent for " + interfaceType + ".");
 
 									defaultComponent = componentType;
 								}
@@ -310,7 +334,7 @@ namespace ComponentGlue.Framework
 						}
 						
 						if(defaultComponent != null)
-							this.Bind(interfaceType).To(defaultComponent);
+							this.Bind(interfaceType).To(defaultComponent).As(bindType);
 					}
 				}
 			}

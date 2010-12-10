@@ -82,10 +82,18 @@ namespace ComponentGlue.Framework
 		public void ToConstant(object value)
 		{
 			if(value != null && !this.InterfaceType.IsAssignableFrom(value.GetType()))
-				throw new InvalidOperationException("Value is not an instance of " + this.ComponentType);
+				throw new BindingSyntaxException("Value is not an instance of " + this.ComponentType);
 
 			this.Type = ComponentBindType.Constant;
 			this.Constant = value;
+		}
+
+		public void As(ComponentBindType bindType)
+		{
+			if(bindType == ComponentBindType.Constant)
+				throw new BindingSyntaxException("ComponentBindType.Constant not valid for the As() method.");
+
+			this.Type = bindType;
 		}
 
 		public void AsSingleton()

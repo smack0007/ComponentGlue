@@ -99,6 +99,13 @@ namespace ComponentGlue.Tests
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
 
+		[Test, ExpectedException]
+		public void AsBindTypeConstantThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().To<Bar1>().As(ComponentBindType.Constant);
+		}
+
 		[Test]
 		public void BindToConstantDoesNotConstructNewInstance()
 		{

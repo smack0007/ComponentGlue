@@ -40,11 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindingSyntax\BindingSyntaxException.cs" />
     <Compile Include="ComponentBinding.cs" />
     <Compile Include="ComponentBindingCollection.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxFor.cs" />
     <Compile Include="BindingSyntax\IBindingSyntaxRoot.cs" />
     <Compile Include="ComponentBindType.cs" />
+    <Compile Include="ComponentResolutionException.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IComponentContainer.cs" />
