@@ -290,12 +290,15 @@ namespace ComponentGlue.Framework
 		/// <param name="bindType"></param>
 		public void AutoBind(Assembly assembly, ComponentBindType bindType)
 		{
-			Dictionary<Type, List<Type>> implementors = new Dictionary<Type,List<Type>>();
+			Dictionary<Type, List<Type>> implementors = new Dictionary<Type, List<Type>>();
 
 			foreach(Type componentType in assembly.GetTypes())
 			{
-				if(componentType.IsClass)
+				if(componentType.IsClass && !componentType.IsAbstract)
 				{
+					if(!this.HasBinding(componentType))
+						this.Bind(componentType).ToSelf().As(bindType);
+
 					foreach(Type interfaceType in componentType.GetInterfaces())
 					{
 						if(!implementors.ContainsKey(interfaceType))
@@ -309,7 +312,7 @@ namespace ComponentGlue.Framework
 
 			foreach(Type interfaceType in implementors.Keys)
 			{
-				if(!HasBinding(interfaceType))
+				if(!this.HasBinding(interfaceType))
 				{
 					if(implementors[interfaceType].Count == 1) // One implementor so we have the default binding
 					{
@@ -332,7 +335,7 @@ namespace ComponentGlue.Framework
 								}
 							}
 						}
-						
+
 						if(defaultComponent != null)
 							this.Bind(interfaceType).To(defaultComponent).As(bindType);
 					}

@@ -30,7 +30,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void AfterAutoBindFooCanBeResolved()
+		public void AfterAutoBindIFooCanBeResolved()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly());
@@ -42,6 +42,18 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
+		public void AfterAutoBindWithBindTypeSingletonIFooResolvesAsSingleton()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
+
+			IFoo foo1 = container.Get<IFoo>();
+			IFoo foo2 = container.Get<IFoo>();
+
+			Assert.AreSame(foo1, foo2);
+		}
+
+		[Test]
 		public void AfterAutoBindConcreteABCanBeResolved()
 		{
 			ComponentContainer container = new ComponentContainer();
@@ -50,6 +62,26 @@ namespace ComponentGlue.Tests
 			ConcreteAB ab = container.Get<ConcreteAB>();
 			Assert.NotNull(ab.A);
 			Assert.NotNull(ab.B);
+		}
+
+		[Test]
+		public void AfterAutoBindAsSingletonConcreteABIsResolvedAsSingleton()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
+
+			ConcreteAB ab1 = container.Get<ConcreteAB>();
+			ConcreteAB ab2 = container.Get<ConcreteAB>();
+
+			Assert.AreSame(ab1, ab2);
+		}
+
+		[Test]
+		public void MultipleCallsToAutoBindDoesNotThrowException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly());
+			container.AutoBind(Assembly.GetExecutingAssembly());
 		}
 	}
 }
