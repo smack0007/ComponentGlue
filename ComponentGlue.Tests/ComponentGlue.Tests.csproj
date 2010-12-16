@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\CustomInjectAttribute.cs" />
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="BindTests.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
@@ -50,6 +51,8 @@
     <Compile Include="Classes\ConcreteA.cs" />
     <Compile Include="Classes\ConcreteAB.cs" />
     <Compile Include="Classes\ConcreteB.cs" />
+    <Compile Include="Classes\CustomAttributePropertyInject.cs" />
+    <Compile Include="ConfigurationTests.cs" />
     <Compile Include="ParentContainerTests.cs" />
     <Compile Include="Classes\AbstractClass.cs" />
     <Compile Include="Classes\Bar1.cs" />

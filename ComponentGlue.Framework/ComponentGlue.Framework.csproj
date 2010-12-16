@@ -50,6 +50,7 @@
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IComponentContainer.cs" />
+    <Compile Include="IComponentResolver.cs" />
     <Compile Include="InjectAttribute.cs" />
     <Compile Include="ComponentContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

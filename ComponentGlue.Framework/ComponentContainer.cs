@@ -15,6 +15,24 @@ namespace ComponentGlue.Framework
 
 		Stack<Type> constructStack;
 
+		Type injectAttributeType;
+
+		/// <summary>
+		/// The attribute type which indicates injection.
+		/// </summary>
+		public Type InjectAttributeType
+		{
+			get { return this.injectAttributeType; }
+
+			set
+			{
+				if(!typeof(Attribute).IsAssignableFrom(value))
+					throw new InvalidOperationException(value + " is not an Attribute.");
+
+				this.injectAttributeType = value;
+			}
+		}
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -39,6 +57,8 @@ namespace ComponentGlue.Framework
 
 			this.Bind(typeof(ComponentContainer)).ToConstant(this);
 			this.Bind(typeof(IComponentContainer)).ToConstant(this);
+
+			this.injectAttributeType = typeof(InjectAttribute);
 		}
 
 		/// <summary>
@@ -82,7 +102,7 @@ namespace ComponentGlue.Framework
 
 					foreach(Attribute attribute in constructor.GetCustomAttributes(true))
 					{
-						if(attribute is InjectAttribute)
+						if(this.injectAttributeType.IsInstanceOfType(attribute))
 						{
 							if(injectableConstructor != null)
 								throw new ComponentResolutionException("Multiple injectable constructors found for type " + componentType + ".");
@@ -225,7 +245,7 @@ namespace ComponentGlue.Framework
 			{
 				foreach(Attribute attribute in property.GetCustomAttributes(true))
 				{
-					if(attribute is InjectAttribute)
+					if(this.injectAttributeType.IsInstanceOfType(attribute))
 					{
 						if(!property.CanWrite)
 							throw new ComponentResolutionException(property.Name + " is marked as Inject but not writable.");
