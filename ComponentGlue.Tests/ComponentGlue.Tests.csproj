@@ -31,7 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="nunit.framework, Version=2.5.7.10213, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -74,7 +76,7 @@
     <Compile Include="Classes\PropertyInject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComponentGlue.Framework\ComponentGlue.Framework.csproj">
+    <ProjectReference Include="..\ComponentGlue\ComponentGlue.csproj">
       <Project>{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}</Project>
       <Name>ComponentGlue.Framework</Name>
     </ProjectReference>

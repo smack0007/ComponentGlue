@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using NUnit.Framework;
-using ComponentGlue.Framework;
+using ComponentGlue;
 using ComponentGlue.Tests.Attributes;
 using ComponentGlue.Tests.Classes;
 

@@ -56,9 +56,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComponentGlue.Framework\ComponentGlue.Framework.csproj">
-      <Project>{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}</Project>
-      <Name>ComponentGlue.Framework</Name>
+    <ProjectReference Include="..\ComponentGlue\ComponentGlue.csproj">
+      <Project>{dae79386-2b0a-4470-9fdb-6effe00ce50c}</Project>
+      <Name>ComponentGlue</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

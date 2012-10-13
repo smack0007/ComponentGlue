@@ -1,11 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue.Framework", "ComponentGlue.Framework\ComponentGlue.Framework.csproj", "{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Desktop
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue.Tests", "ComponentGlue.Tests\ComponentGlue.Tests.csproj", "{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue.Demo", "ComponentGlue.Demo\ComponentGlue.Demo.csproj", "{CC5D25AF-193A-42B6-965B-FF6F0CEEEBD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentGlue", "ComponentGlue\ComponentGlue.csproj", "{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,16 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|x86.ActiveCfg = Release|Any CPU
 		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE85ED5C-96DA-4A09-A9DE-6048A2ABBE8F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -47,6 +37,16 @@ Global
 		{CC5D25AF-193A-42B6-965B-FF6F0CEEEBD5}.Release|Mixed Platforms.Build.0 = Release|x86
 		{CC5D25AF-193A-42B6-965B-FF6F0CEEEBD5}.Release|x86.ActiveCfg = Release|x86
 		{CC5D25AF-193A-42B6-965B-FF6F0CEEEBD5}.Release|x86.Build.0 = Release|x86
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{DAE79386-2B0A-4470-9FDB-6EFFE00CE50C}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
