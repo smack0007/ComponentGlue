@@ -3,6 +3,7 @@ using System.Reflection;
 using NUnit.Framework;
 using ComponentGlue;
 using ComponentGlue.Tests.Classes;
+using ComponentGlue.BindingSyntax;
 
 namespace ComponentGlue.Tests
 {
@@ -33,7 +34,7 @@ namespace ComponentGlue.Tests
 			Assert.AreSame(foo1.Bar, foo2.Bar);
 		}
 
-		[Test, ExpectedException]
+		[Test, ExpectedException(typeof(BindingSyntaxException))]
 		public void BindTypeWhichDoesNotImplementInterfaceThrowsException()
 		{
 			ComponentContainer container = new ComponentContainer();
@@ -99,7 +100,7 @@ namespace ComponentGlue.Tests
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
 
-		[Test, ExpectedException]
+		[Test, ExpectedException(typeof(BindingSyntaxException))]
 		public void AsBindTypeConstantThrowsException()
 		{
 			ComponentContainer container = new ComponentContainer();
@@ -118,7 +119,7 @@ namespace ComponentGlue.Tests
 			Assert.AreSame(bar, foo.Bar);
 		}
 
-		[Test, ExpectedException]
+		[Test, ExpectedException(typeof(BindingSyntaxException))]
 		public void BindToConstantWhereComponentNotNullAndIsNotInstanceOfTypeThrowsException()
 		{
 			ComponentContainer container = new ComponentContainer();
@@ -130,10 +131,40 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void BindToConstantWhereComponentIsNullDoesNotThrowException()
+		public void BindToConstantWhereComponentIsNullDoesNotThrowsException()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToConstant(null);
+		}
+
+		[Test, ExpectedException(typeof(ArgumentNullException))]
+		public void BindToFactoryMethodWhereMethodIsNullThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().ToFactoryMethod<Bar1>(null);
+		}
+
+		[Test, ExpectedException(typeof(BindingSyntaxException))]
+		public void BindToFactoryMethodWhereMethodReturnValueIsAssignableToInterfaceThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().ToFactoryMethod((x) => new Foo(new Bar1()));
+		}
+
+		[Test]
+		public void BindToFactoryMethodCallsFactoryMethodWhenResolving()
+		{
+			bool factoryMethodCalled = false;
+
+			ComponentContainer container = new ComponentContainer();
+			container.Bind<IBar>().ToFactoryMethod((x) =>
+			{
+				factoryMethodCalled = true;
+				return new Bar1();
+			});
+
+			IBar bar = container.Get<IBar>();
+			Assert.IsTrue(factoryMethodCalled);
 		}
 	}
 }

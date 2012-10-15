@@ -20,6 +20,11 @@ namespace ComponentGlue
 		/// <summary>
 		/// The component instance is specified.
 		/// </summary>
-		Constant
+		Constant,
+
+		/// <summary>
+		/// The component instance is built by a factory method.
+		/// </summary>
+		FactoryMethod
 	}
 }

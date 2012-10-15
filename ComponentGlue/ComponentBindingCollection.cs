@@ -16,7 +16,7 @@ namespace ComponentGlue
 		
 		public ComponentBinding GetBinding(Type interfaceType)
 		{
-			if(!this.bindings.ContainsKey(interfaceType))
+			if (!this.bindings.ContainsKey(interfaceType))
 				throw new InvalidOperationException("No binding for interface type " + interfaceType);
 
 			return this.bindings[interfaceType];
@@ -24,7 +24,7 @@ namespace ComponentGlue
 				
 		public IBindingSyntaxTo Bind(Type interfaceType)
 		{
-			if(this.bindings.ContainsKey(interfaceType))
+			if (this.bindings.ContainsKey(interfaceType))
 				throw new InvalidOperationException("A binding has already been provided for the interface type " + interfaceType);
 
 			ComponentBinding binding = new ComponentBinding(interfaceType);
@@ -40,7 +40,7 @@ namespace ComponentGlue
 		
 		public IBindingSyntaxTo Rebind(Type interfaceType)
 		{
-			if(!this.bindings.ContainsKey(interfaceType))
+			if (!this.bindings.ContainsKey(interfaceType))
 			{
 				ComponentBinding binding = new ComponentBinding(interfaceType);
 				this.bindings.Add(interfaceType, binding);

@@ -45,5 +45,8 @@ _ReSharper*/
 # Office Temp Files
 ~$*
 
+#NUnit
+*.VisualState.xml
+
 #NuGet
 packages/

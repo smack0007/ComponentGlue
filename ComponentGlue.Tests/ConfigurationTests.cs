@@ -11,7 +11,14 @@ namespace ComponentGlue.Tests
 	public class ConfigurationTests
 	{
 		[Test, ExpectedException]
-		public void AssigningInjectAttributeTypeNonAttributeTypeThrowsException()
+		public void AssigningInjectAttributeTypeToNullThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.InjectAttributeType = null;
+		}
+
+		[Test, ExpectedException]
+		public void AssigningInjectAttributeTypeToNonAttributeTypeThrowsException()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = typeof(ConfigurationTests);

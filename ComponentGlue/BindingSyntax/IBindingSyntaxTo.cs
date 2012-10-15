@@ -22,5 +22,11 @@ namespace ComponentGlue.BindingSyntax
 		/// </summary>
 		/// <param name="component"></param>
 		void ToConstant(object component);
+
+		/// <summary>
+		/// Sets the component as a factory method.
+		/// </summary>
+		/// <param name="component"></param>
+		void ToFactoryMethod<T>(Func<IComponentResolver, T> factoryMethod);
 	}
 }
