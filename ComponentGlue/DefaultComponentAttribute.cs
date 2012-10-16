@@ -11,7 +11,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The interface this component is the default for. 
 		/// </summary>
-		public Type InterfaceType
+		public Type ComponentType
 		{
 			get;
 			private set;
@@ -20,10 +20,10 @@ namespace ComponentGlue
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="interfaceType"></param>
-		public DefaultComponentAttribute(Type interfaceType)
+		/// <param name="componentType"></param>
+		public DefaultComponentAttribute(Type componentType)
 		{
-			this.InterfaceType = interfaceType;
+			this.ComponentType = componentType;
 		}
 	}
 }

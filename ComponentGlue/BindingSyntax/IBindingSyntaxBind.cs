@@ -7,22 +7,22 @@ namespace ComponentGlue.BindingSyntax
 		/// <summary>
 		/// Adds a binding.
 		/// </summary>
-		/// <param name="interfaceType"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
-		IBindingSyntaxTo Bind(Type interfaceType);
+		IBindingSyntaxTo Bind(Type type);
 
 		/// <summary>
 		/// Returns whether or not a binding has already been set.
 		/// </summary>
-		/// <param name="interfaceType"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
-		bool HasBinding(Type interfaceType);
+		bool HasBinding(Type type);
 
 		/// <summary>
 		/// Adds a binding, overriding any existing binding.
 		/// </summary>
-		/// <param name="interfaceType"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
-		IBindingSyntaxTo Rebind(Type interfaceType);
+		IBindingSyntaxTo Rebind(Type type);
 	}
 }

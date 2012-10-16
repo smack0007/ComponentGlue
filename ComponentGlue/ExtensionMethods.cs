@@ -28,42 +28,42 @@ namespace ComponentGlue
 		/// <summary>
 		/// Sets the component type.
 		/// </summary>
-		/// <typeparam name="TComponentType"></typeparam>
+		/// <typeparam name="TConcreteType"></typeparam>
 		/// <returns></returns>
-		public static IBindingSyntaxAs To<TComponentType>(this IBindingSyntaxTo container)
+		public static IBindingSyntaxAs To<TConcreteType>(this IBindingSyntaxTo container)
 		{
-			return container.To(typeof(TComponentType));
+			return container.To(typeof(TConcreteType));
 		}
 
 		/// <summary>
 		/// Adds a binding.
 		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
+		/// <typeparam name="TComponentType"></typeparam>
 		/// <param name="container"></param>
 		/// <returns></returns>
-		public static IBindingSyntaxTo Bind<TInterfaceType>(this IBindingSyntaxBind container)
+		public static IBindingSyntaxTo Bind<TComponentType>(this IBindingSyntaxBind container)
 		{
-			return container.Bind(typeof(TInterfaceType));
+			return container.Bind(typeof(TComponentType));
 		}
 
 		/// <summary>
 		/// Returns whether or not a binding has already been set.
 		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
+		/// <typeparam name="TComponentType"></typeparam>
 		/// <returns></returns>
-		public static bool HasBinding<TInterfaceType>(this IBindingSyntaxBind container)
+		public static bool HasBinding<TComponentType>(this IBindingSyntaxBind container)
 		{
-			return container.HasBinding(typeof(TInterfaceType));
+			return container.HasBinding(typeof(TComponentType));
 		}
 
 		/// <summary>
 		/// Adds a binding, overriding any existing binding.
 		/// </summary>
-		/// <typeparam name="TInterfaceType"></typeparam>
+		/// <typeparam name="TComponentType"></typeparam>
 		/// <returns></returns>
-		public static IBindingSyntaxTo Rebind<TInterfaceType>(this IBindingSyntaxBind container)
+		public static IBindingSyntaxTo Rebind<TComponentType>(this IBindingSyntaxBind container)
 		{
-			return container.Rebind(typeof(TInterfaceType));
+			return container.Rebind(typeof(TComponentType));
 		}
 	}
 }

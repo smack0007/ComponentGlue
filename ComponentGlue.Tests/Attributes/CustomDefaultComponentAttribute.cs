@@ -4,7 +4,7 @@ namespace ComponentGlue.Tests.Attributes
 {
 	public class CustomDefaultComponentAttribute : Attribute, IDefaultComponentAttribute
 	{
-		public Type InterfaceType
+		public Type ComponentType
 		{
 			get;
 			set;

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ComponentGlue.Tests.Classes
 {
-	[CustomDefaultComponent(InterfaceType = typeof(IBar))]
+	[CustomDefaultComponent(ComponentType = typeof(IBar))]
 	public class BarWithCustomDefaultComponentAttribte : IBar
 	{
 	}

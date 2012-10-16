@@ -7,6 +7,6 @@ namespace ComponentGlue
 		/// <summary>
 		/// The interface this component is the default for. 
 		/// </summary>
-		Type InterfaceType { get; }
+		Type ComponentType { get; }
 	}
 }

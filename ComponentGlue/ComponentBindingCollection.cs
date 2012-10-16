@@ -14,39 +14,39 @@ namespace ComponentGlue
 			this.bindings = new Dictionary<Type, ComponentBinding>();
 		}
 		
-		public ComponentBinding GetBinding(Type interfaceType)
+		public ComponentBinding GetBinding(Type type)
 		{
-			if (!this.bindings.ContainsKey(interfaceType))
-				throw new InvalidOperationException("No binding for interface type " + interfaceType);
+			if (!this.bindings.ContainsKey(type))
+				throw new InvalidOperationException(string.Format("No binding for type {0}.", type));
 
-			return this.bindings[interfaceType];
+			return this.bindings[type];
 		}
 				
-		public IBindingSyntaxTo Bind(Type interfaceType)
+		public IBindingSyntaxTo Bind(Type type)
 		{
-			if (this.bindings.ContainsKey(interfaceType))
-				throw new InvalidOperationException("A binding has already been provided for the interface type " + interfaceType);
+			if (this.bindings.ContainsKey(type))
+				throw new InvalidOperationException(string.Format("A binding has already been provided for the type {0}.", type));
 
-			ComponentBinding binding = new ComponentBinding(interfaceType);
-			this.bindings.Add(interfaceType, binding);
+			ComponentBinding binding = new ComponentBinding(type);
+			this.bindings.Add(type, binding);
 
 			return binding;
 		}
 
-		public bool HasBinding(Type interfaceType)
+		public bool HasBinding(Type type)
 		{
-			return this.bindings.ContainsKey(interfaceType);
+			return this.bindings.ContainsKey(type);
 		}
 		
-		public IBindingSyntaxTo Rebind(Type interfaceType)
+		public IBindingSyntaxTo Rebind(Type type)
 		{
-			if (!this.bindings.ContainsKey(interfaceType))
+			if (!this.bindings.ContainsKey(type))
 			{
-				ComponentBinding binding = new ComponentBinding(interfaceType);
-				this.bindings.Add(interfaceType, binding);
+				ComponentBinding binding = new ComponentBinding(type);
+				this.bindings.Add(type, binding);
 			}
 
-			return this.bindings[interfaceType];
+			return this.bindings[type];
 		}
 	}
 }

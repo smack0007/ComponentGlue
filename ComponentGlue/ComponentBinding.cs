@@ -6,16 +6,7 @@ namespace ComponentGlue
 	public class ComponentBinding : IBindingSyntaxTo, IBindingSyntaxAs
 	{
 		/// <summary>
-		/// The type of interface which is bound.
-		/// </summary>
-		internal Type InterfaceType
-		{
-			get;
-			private set;
-		}
-
-		/// <summary>
-		/// The concrete type to which the interface is bound.
+		/// The type of component which is bound.
 		/// </summary>
 		internal Type ComponentType
 		{
@@ -24,9 +15,18 @@ namespace ComponentGlue
 		}
 
 		/// <summary>
+		/// The concrete type to which the component is bound.
+		/// </summary>
+		internal Type ConcreteType
+		{
+			get;
+			private set;
+		}
+
+		/// <summary>
 		/// The type of binding.
 		/// </summary>
-		internal ComponentBindType Type
+		internal ComponentBindType BindType
 		{
 			get;
 			private set;
@@ -53,18 +53,18 @@ namespace ComponentGlue
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="interfaceType"></param>
-		public ComponentBinding(Type interfaceType)
+		/// <param name="componentType"></param>
+		public ComponentBinding(Type componentType)
 		{
-			this.InterfaceType = interfaceType;
-			this.ComponentType = interfaceType;
-			this.Type = ComponentBindType.Transient;
+			this.ComponentType = componentType;
+			this.ConcreteType = componentType;
+			this.BindType = ComponentBindType.Transient;
 		}
 
 		private void EnsureComponentIsAssignableToInterface(Type componentType)
 		{
-			if (!this.InterfaceType.IsAssignableFrom(componentType))
-				throw new BindingSyntaxException(string.Format("Type {0} is not assignable to type {1}.", componentType, this.InterfaceType));
+			if (!this.ComponentType.IsAssignableFrom(componentType))
+				throw new BindingSyntaxException(string.Format("Type {0} is not assignable to type {1}.", componentType, this.ComponentType));
 		}
 
 		public IBindingSyntaxAs To(Type componentType)
@@ -74,13 +74,13 @@ namespace ComponentGlue
 
 			this.EnsureComponentIsAssignableToInterface(componentType);
 			
-			this.ComponentType = componentType;
+			this.ConcreteType = componentType;
 			return this;
 		}
 				
 		public IBindingSyntaxAs ToSelf()
 		{
-			this.ComponentType = this.InterfaceType;
+			this.ConcreteType = this.ComponentType;
 			return this;
 		}
 
@@ -89,7 +89,7 @@ namespace ComponentGlue
 			if (value != null)
 				this.EnsureComponentIsAssignableToInterface(value.GetType());
 
-			this.Type = ComponentBindType.Constant;
+			this.BindType = ComponentBindType.Constant;
 			this.Constant = value;
 		}
 
@@ -100,7 +100,7 @@ namespace ComponentGlue
 
 			this.EnsureComponentIsAssignableToInterface(typeof(T));
 
-			this.Type = ComponentBindType.FactoryMethod;
+			this.BindType = ComponentBindType.FactoryMethod;
 			this.FactoryMethod = (container) => { return (object)factoryMethod(container); };
 		}
 
@@ -112,17 +112,17 @@ namespace ComponentGlue
 			if (bindType == ComponentBindType.FactoryMethod)
 				throw new BindingSyntaxException("ComponentBindType.FactoryMethod not valid for the As() method.");
 
-			this.Type = bindType;
+			this.BindType = bindType;
 		}
 
 		public void AsSingleton()
 		{
-			this.Type = ComponentBindType.Singleton;
+			this.BindType = ComponentBindType.Singleton;
 		}
 
 		public void AsTransient()
 		{
-			this.Type = ComponentBindType.Transient;
+			this.BindType = ComponentBindType.Transient;
 		}
 	}
 }

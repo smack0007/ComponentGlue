@@ -144,9 +144,8 @@ namespace ComponentGlue
 			ParameterInfo[] parameters = injectableConstructor.GetParameters();
 			object[] injectComponents = new object[parameters.Length];
 
-			int i = 0;
-			foreach (ParameterInfo parameter in parameters)
-				injectComponents[i++] = this.FetchComponentForInjection(componentType, parameter.ParameterType);
+			for (int i = 0; i < parameters.Length; i++)
+				injectComponents[i] = this.FetchComponentForInjection(componentType, parameters[i].ParameterType);
 
 			object obj = injectableConstructor.Invoke(injectComponents);
 
@@ -169,7 +168,7 @@ namespace ComponentGlue
 				// Default bindings
 				if (this.defaultBindings.HasBinding(type))
 				{
-					component = FetchComponentByBinding(this.defaultBindings.GetBinding(type));
+					component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(type));
 				}
 				else if (this.parent != null) // Proxy to parent container if available
 				{
@@ -198,7 +197,6 @@ namespace ComponentGlue
 		/// <summary>
 		/// Gets a component instance based on a binding.
 		/// </summary>
-		/// <param name="interfaceType"></param>
 		/// <param name="binding"></param>
 		/// <returns></returns>
 		private object FetchComponentByBinding(ComponentBinding binding)
@@ -208,23 +206,23 @@ namespace ComponentGlue
 
 			object component = null;
 
-			switch (binding.Type)
+			switch (binding.BindType)
 			{
 				case ComponentBindType.Transient:
-					component = this.Construct(binding.ComponentType);
+					component = this.Construct(binding.ConcreteType);
 					this.Inject(component);
 					break;
 
 				case ComponentBindType.Singleton:
-					if(!this.components.ContainsKey(binding.InterfaceType))
+					if(!this.components.ContainsKey(binding.ComponentType))
 					{
-						component = this.Construct(binding.ComponentType);
-						this.components[binding.InterfaceType] = component;
+						component = this.Construct(binding.ConcreteType);
+						this.components[binding.ComponentType] = component;
 						this.Inject(component);
 					}
 					else
 					{
-						component = this.components[binding.InterfaceType];
+						component = this.components[binding.ComponentType];
 					}
 					break;
 									
@@ -243,28 +241,28 @@ namespace ComponentGlue
 		/// <summary>
 		/// Gets a component instance for injection.
 		/// </summary>
-		/// <param name="constructedType"></param>
-		/// <param name="interfaceType"></param>
+		/// <param name="constructedType">The type which is currently being constructed.</param>
+		/// <param name="componentType">The requested component type.</param>
 		/// <returns></returns>
-		private object FetchComponentForInjection(Type constructedType, Type interfaceType)
+		private object FetchComponentForInjection(Type constructedType, Type componentType)
 		{
 			object component = null;
 
 			// Specific bindings
-			if (this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(interfaceType))
-				component = this.FetchComponentByBinding(this.componentBindings[constructedType].GetBinding(interfaceType));
+			if (this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(componentType))
+				component = this.FetchComponentByBinding(this.componentBindings[constructedType].GetBinding(componentType));
 			
 			// Default bindings
-			if (component == null && this.defaultBindings.HasBinding(interfaceType))
-				component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(interfaceType));
+			if (component == null && this.defaultBindings.HasBinding(componentType))
+				component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(componentType));
 
 			// Proxy to parent container if available
 			if (component == null && this.parent != null)
-				component = this.parent.FetchComponentForInjection(constructedType, interfaceType);
+				component = this.parent.FetchComponentForInjection(constructedType, componentType);
 
 			// Component not found
 			if (component == null)
-				component = this.Construct(interfaceType);
+				component = this.Construct(componentType);
 
 			return component;
 		}
@@ -295,27 +293,27 @@ namespace ComponentGlue
 			}
 		}
 
-		public IBindingSyntaxBind For(Type constructedType)
+		public IBindingSyntaxBind For(Type type)
 		{
-			if (!this.componentBindings.ContainsKey(constructedType))
-				this.componentBindings.Add(constructedType, new ComponentBindingCollection());
+			if (!this.componentBindings.ContainsKey(type))
+				this.componentBindings.Add(type, new ComponentBindingCollection());
 
-			return this.componentBindings[constructedType];
+			return this.componentBindings[type];
 		}
 
-		public IBindingSyntaxTo Bind(Type interfaceType)
+		public IBindingSyntaxTo Bind(Type type)
 		{
-			return this.defaultBindings.Bind(interfaceType);
+			return this.defaultBindings.Bind(type);
 		}
 						
-		public bool HasBinding(Type interfaceType)
+		public bool HasBinding(Type type)
 		{
-			return this.defaultBindings.HasBinding(interfaceType);
+			return this.defaultBindings.HasBinding(type);
 		}
 
-		public IBindingSyntaxTo Rebind(Type interfaceType)
+		public IBindingSyntaxTo Rebind(Type type)
 		{
-			return this.defaultBindings.Rebind(interfaceType);
+			return this.defaultBindings.Rebind(type);
 		}
 		
 		/// <summary>
@@ -388,7 +386,7 @@ namespace ComponentGlue
 						{
 							foreach (IDefaultComponentAttribute attribute in componentType.GetCustomAttributes(this.defaultComponentAttributeType, false))
 							{
-								if(attribute.InterfaceType == interfaceType)
+								if(attribute.ComponentType == interfaceType)
 								{
 									if (defaultComponent != null)
 										throw new ComponentResolutionException(string.Format("More than one component is marked as DefaultComponent for type {0}.", interfaceType));
