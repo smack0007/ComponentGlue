@@ -8,7 +8,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The type of interface which is bound.
 		/// </summary>
-		public Type InterfaceType
+		internal Type InterfaceType
 		{
 			get;
 			private set;
@@ -17,7 +17,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The concrete type to which the interface is bound.
 		/// </summary>
-		public Type ComponentType
+		internal Type ComponentType
 		{
 			get;
 			private set;
@@ -26,7 +26,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The type of binding.
 		/// </summary>
-		public ComponentBindType Type
+		internal ComponentBindType Type
 		{
 			get;
 			private set;
@@ -35,7 +35,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The bound constant object.
 		/// </summary>
-		public object Constant
+		internal object Constant
 		{
 			get;
 			private set;
@@ -44,7 +44,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The factory method.
 		/// </summary>
-		public Func<IComponentResolver, object> FactoryMethod
+		internal Func<IComponentResolver, object> FactoryMethod
 		{
 			get;
 			private set;

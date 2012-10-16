@@ -25,7 +25,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void PropertiesCanBeInjectedWhenUsingCustomAttribute()
+		public void PropertiesCanBeInjectedWhenUsingCustomInjectAttribute()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = typeof(CustomInjectAttribute);
@@ -39,6 +39,38 @@ namespace ComponentGlue.Tests
 
 			Assert.IsNotNull(instance.Bar);
 			Assert.IsInstanceOf<Bar1>(instance.Bar);
+		}
+
+		[Test, ExpectedException]
+		public void AssigningDefaultComponentAttributeTypeToNullThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.DefaultComponentAttributeType = null;
+		}
+
+		[Test, ExpectedException]
+		public void AssigningDefaultComponentAttributeTypeToNonAttributeTypeThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.DefaultComponentAttributeType = typeof(ConfigurationTests);
+		}
+
+		[Test, ExpectedException]
+		public void AssigningDefaultComponentAttributeTypeWhichDoesNotImplementIDefaultComponentAttributeThrowsException()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.DefaultComponentAttributeType = typeof(CustomInjectAttribute);
+		}
+
+		[Test]
+		public void ComponentsCanBeResolvedWhenUsingCustomDefaultComponentAttribute()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.DefaultComponentAttributeType = typeof(CustomDefaultComponentAttribute);
+			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
+
+			IBar bar = container.Get<IBar>();
+			Assert.IsInstanceOf<BarWithCustomDefaultComponentAttribte>(bar);
 		}
 	}
 }

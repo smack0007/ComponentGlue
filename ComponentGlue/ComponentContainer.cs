@@ -19,6 +19,7 @@ namespace ComponentGlue
 		Stack<Type> constructStack;
 
 		Type injectAttributeType;
+		Type defaultComponentAttributeType;
 
 		/// <summary>
 		/// The attribute type which indicates injection.
@@ -29,10 +30,27 @@ namespace ComponentGlue
 
 			set
 			{
-				if(!typeof(Attribute).IsAssignableFrom(value))
-					throw new InvalidOperationException(value + " is not an Attribute.");
+				this.EnsureTypeIsAttribute(value);
 
 				this.injectAttributeType = value;
+			}
+		}
+
+		/// <summary>
+		/// The attribute type which indicates injection.
+		/// </summary>
+		public Type DefaultComponentAttributeType
+		{
+			get { return this.defaultComponentAttributeType; }
+
+			set
+			{
+				this.EnsureTypeIsAttribute(value);
+
+				if (!typeof(IDefaultComponentAttribute).IsAssignableFrom(value))
+					throw new InvalidOperationException("DefaultComponentAttributeType must be assignable from IDefaultComponentAttribute.");
+
+				this.defaultComponentAttributeType = value;
 			}
 		}
 
@@ -62,6 +80,7 @@ namespace ComponentGlue
 			this.Bind(typeof(IComponentContainer)).ToConstant(this);
 
 			this.injectAttributeType = typeof(InjectAttribute);
+			this.defaultComponentAttributeType = typeof(DefaultComponentAttribute);
 		}
 
 		/// <summary>
@@ -73,7 +92,13 @@ namespace ComponentGlue
 			this.defaultBindings = null;
 			this.componentBindings = null;
 		}
-				
+
+		private void EnsureTypeIsAttribute(Type type)
+		{
+			if (!typeof(Attribute).IsAssignableFrom(type))
+				throw new InvalidOperationException(string.Format("{0} is not an Attribute type.", type));
+		}
+		
 		/// <summary>
 		/// Constructs a new instance of a type.
 		/// </summary>
@@ -103,15 +128,12 @@ namespace ComponentGlue
 					if (constructor.GetParameters().Length == 0)
 						injectableConstructor = constructor;
 
-					foreach (Attribute attribute in constructor.GetCustomAttributes(true))
-					{
-						if(this.injectAttributeType.IsInstanceOfType(attribute))
-						{
-							if(injectableConstructor != null)
-								throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", componentType));
+					foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
+					{						
+						if(injectableConstructor != null)
+							throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", componentType));
 
-							injectableConstructor = constructor;
-						}
+						injectableConstructor = constructor;
 					}
 				}
 			}
@@ -146,9 +168,13 @@ namespace ComponentGlue
 			{
 				// Default bindings
 				if (this.defaultBindings.HasBinding(type))
+				{
 					component = FetchComponentByBinding(this.defaultBindings.GetBinding(type));
+				}
 				else if (this.parent != null) // Proxy to parent container if available
+				{
 					component = this.parent.Get(type);
+				}
 			}
 			else
 			{
@@ -323,6 +349,9 @@ namespace ComponentGlue
 		/// <param name="bindType"></param>
 		public void AutoBind(Assembly assembly, ComponentBindType bindType)
 		{
+			if (assembly == null)
+				throw new ArgumentNullException("assembly");
+
 			Dictionary<Type, List<Type>> implementors = new Dictionary<Type, List<Type>>();
 
 			foreach (Type componentType in assembly.GetTypes())
@@ -357,12 +386,12 @@ namespace ComponentGlue
 
 						foreach (Type componentType in implementors[interfaceType])
 						{
-							foreach (DefaultComponentAttribute attribute in componentType.GetCustomAttributes(typeof(DefaultComponentAttribute), false))
+							foreach (IDefaultComponentAttribute attribute in componentType.GetCustomAttributes(this.defaultComponentAttributeType, false))
 							{
 								if(attribute.InterfaceType == interfaceType)
 								{
 									if (defaultComponent != null)
-										throw new ComponentResolutionException("More than one component is marked as DefaultComponent for " + interfaceType + ".");
+										throw new ComponentResolutionException(string.Format("More than one component is marked as DefaultComponent for type {0}.", interfaceType));
 
 									defaultComponent = componentType;
 								}
