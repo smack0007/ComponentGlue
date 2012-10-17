@@ -46,7 +46,9 @@
     <Compile Include="Attributes\CustomDefaultComponentAttribute.cs" />
     <Compile Include="Attributes\CustomInjectAttribute.cs" />
     <Compile Include="AutoBindTests.cs" />
+    <Compile Include="AutoFactoryTests.cs" />
     <Compile Include="BindTests.cs" />
+    <Compile Include="Classes\AutoFactoryClass.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
     <Compile Include="Classes\CircularDependency2.cs" />
     <Compile Include="Classes\CircularDependencyProperty1.cs" />

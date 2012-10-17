@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using ComponentGlue.BindingSyntax;
 
@@ -98,60 +99,82 @@ namespace ComponentGlue
 			if (!typeof(Attribute).IsAssignableFrom(type))
 				throw new InvalidOperationException(string.Format("{0} is not an Attribute type.", type));
 		}
-		
+
+		private Func<T> ConstructAutoFactory<T>()
+		{
+			return () => { return (T)this.Get(typeof(T)); };
+		}
+
 		/// <summary>
 		/// Constructs a new instance of a type.
 		/// </summary>
-		/// <param name="componentType"></param>
+		/// <param name="type"></param>
 		/// <returns></returns>
-		private object Construct(Type componentType)
+		private object Construct(Type type)
 		{
-			if (componentType.IsAbstract)
-				throw new ComponentResolutionException(string.Format("{0} is abstract.", componentType));
+			if (type.IsInterface)
+				throw new ComponentResolutionException(string.Format("{0} is an interface and cannot be constructed.", type));
 
-			if (this.constructStack.Contains(componentType))
+			if (type.IsAbstract)
+				throw new ComponentResolutionException(string.Format("{0} is abstract and cannot be constructed.", type));
+
+			if (this.constructStack.Contains(type))
 				throw new ComponentResolutionException("Possible infinite construction loop detected.");
 
-			this.constructStack.Push(componentType);
+			this.constructStack.Push(type);
+						
+			object component = null;
 
-			ConstructorInfo injectableConstructor = null;
-			ConstructorInfo[] constructors = componentType.GetConstructors();
-
-			if (constructors.Length == 1)
+			if (typeof(MulticastDelegate).IsAssignableFrom(type))
 			{
-				injectableConstructor = constructors[0];
+				MethodInfo method = type.GetMethod("Invoke");
+				if (method.GetParameters().Length == 0)
+				{					
+					MethodInfo constructMethod = this.GetType().GetMethod("ConstructAutoFactory", BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(method.ReturnType);
+					component = constructMethod.Invoke(this, null);
+				}
 			}
 			else
 			{
-				foreach (ConstructorInfo constructor in constructors)
+				ConstructorInfo injectableConstructor = null;
+				ConstructorInfo[] constructors = type.GetConstructors();
+
+				if (constructors.Length == 1)
 				{
-					if (constructor.GetParameters().Length == 0)
-						injectableConstructor = constructor;
+					injectableConstructor = constructors[0];
+				}
+				else
+				{
+					foreach (ConstructorInfo constructor in constructors)
+					{
+						if (constructor.GetParameters().Length == 0)
+							injectableConstructor = constructor;
 
-					foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
-					{						
-						if(injectableConstructor != null)
-							throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", componentType));
+						foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
+						{
+							if (injectableConstructor != null)
+								throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", type));
 
-						injectableConstructor = constructor;
+							injectableConstructor = constructor;
+						}
 					}
 				}
+
+				if (injectableConstructor == null)
+					throw new ComponentResolutionException(string.Format("No injectable or default constructor found for type {0}.", type));
+
+				ParameterInfo[] parameters = injectableConstructor.GetParameters();
+				object[] injectComponents = new object[parameters.Length];
+
+				for (int i = 0; i < parameters.Length; i++)
+					injectComponents[i] = this.FetchComponentForInjection(type, parameters[i].ParameterType);
+
+				component = injectableConstructor.Invoke(injectComponents);
 			}
-
-			if (injectableConstructor == null)
-				throw new ComponentResolutionException(string.Format("No injectable or default constructor found for type {0}.", componentType));
-
-			ParameterInfo[] parameters = injectableConstructor.GetParameters();
-			object[] injectComponents = new object[parameters.Length];
-
-			for (int i = 0; i < parameters.Length; i++)
-				injectComponents[i] = this.FetchComponentForInjection(componentType, parameters[i].ParameterType);
-
-			object obj = injectableConstructor.Invoke(injectComponents);
 
 			this.constructStack.Pop();
 
-			return obj;
+			return component;
 		}
 								
 		/// <summary>

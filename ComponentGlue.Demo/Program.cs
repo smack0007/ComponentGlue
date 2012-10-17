@@ -11,6 +11,9 @@ namespace ComponentGlue.Demo
 			container.AutoBind();
 
 			IFoo foo = container.Get<IFoo>();
+
+			Func<IFoo> factory = container.Get<Func<IFoo>>();
+			IFoo foo2 = factory();
 		}
 	}
 }
