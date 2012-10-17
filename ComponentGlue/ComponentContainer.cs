@@ -169,7 +169,14 @@ namespace ComponentGlue
 				for (int i = 0; i < parameters.Length; i++)
 					injectComponents[i] = this.FetchComponentForInjection(type, parameters[i].ParameterType);
 
-				component = injectableConstructor.Invoke(injectComponents);
+				try
+				{
+					component = injectableConstructor.Invoke(injectComponents);
+				}
+				catch (TargetInvocationException ex)
+				{
+					throw new ComponentResolutionException(string.Format("Failed while constructing type {0}.", type), ex);
+				}
 			}
 
 			this.constructStack.Pop();

@@ -48,7 +48,7 @@
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="AutoFactoryTests.cs" />
     <Compile Include="BindTests.cs" />
-    <Compile Include="Classes\AutoFactoryClass.cs" />
+    <Compile Include="Classes\FuncClass.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
     <Compile Include="Classes\CircularDependency2.cs" />
     <Compile Include="Classes\CircularDependencyProperty1.cs" />
@@ -58,6 +58,7 @@
     <Compile Include="Classes\ConcreteB.cs" />
     <Compile Include="Classes\CustomAttributePropertyInject.cs" />
     <Compile Include="Classes\BarWithCustomDefaultComponentAttribte.cs" />
+    <Compile Include="Classes\FuncClassWithOneParam.cs" />
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="ParentContainerTests.cs" />
     <Compile Include="Classes\AbstractClass.cs" />

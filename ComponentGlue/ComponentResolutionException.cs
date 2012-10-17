@@ -15,5 +15,15 @@ namespace ComponentGlue
 			: base(message)
 		{
 		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <param name="innerException"></param>
+		public ComponentResolutionException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
 	}
 }
