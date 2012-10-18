@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using ComponentGlue;
@@ -74,6 +75,16 @@ namespace ComponentGlue.Tests
 			ConcreteAB ab2 = container.Get<ConcreteAB>();
 
 			Assert.AreSame(ab1, ab2);
+		}
+
+		[Test]
+		public void AutoBindWithWhereFuncFiltersTypesProperly()
+		{
+			ComponentContainer container = new ComponentContainer();
+			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton, x => x.GetInterfaces().Contains(typeof(IBar)));
+
+			Assert.IsTrue(container.HasBinding<IBar>());
+			Assert.IsFalse(container.HasBinding<IFoo>());
 		}
 
 		[Test]

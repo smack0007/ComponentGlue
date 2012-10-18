@@ -347,19 +347,30 @@ namespace ComponentGlue
 		}
 		
 		/// <summary>
-		/// Performs auto binding on all the types in the Entry Assembly as Transient.
+		/// Performs auto binding on all the types in the entry assembly as Transient.
 		/// </summary>
 		public void AutoBind()
 		{
-			this.AutoBind(Assembly.GetEntryAssembly(), ComponentBindType.Transient);
+			this.DoAutoBind(Assembly.GetEntryAssembly(), default(ComponentBindType), null);
 		}
 
 		/// <summary>
-		/// Performs auto binding on all the types in the entry Assembly as the given bind type.
+		/// Performs auto binding on all the types in the entry assembly as the given bind type.
 		/// </summary>
 		public void AutoBind(ComponentBindType bindType)
 		{
-			this.AutoBind(Assembly.GetEntryAssembly(), bindType);
+			this.DoAutoBind(Assembly.GetEntryAssembly(), bindType, null);
+		}
+
+		/// <summary>
+		/// Performs auto binding on all the types which pass the where clause in the entry assembly as the given bind type.
+		/// </summary>
+		public void AutoBind(ComponentBindType bindType, Func<Type, bool> whereFunc)
+		{
+			if (whereFunc == null)
+				throw new ArgumentNullException("whereFunc");
+
+			this.DoAutoBind(Assembly.GetEntryAssembly(), bindType, whereFunc);
 		}
 
 		/// <summary>
@@ -367,22 +378,45 @@ namespace ComponentGlue
 		/// </summary>
 		public void AutoBind(Assembly assembly)
 		{
-			this.AutoBind(assembly, ComponentBindType.Transient);
+			this.DoAutoBind(assembly, default(ComponentBindType), null);
 		}
 
 		/// <summary>
-		/// Performs auto binding on all they types in the given assemly as the given bind type.
+		/// Performs auto binding on all the types in the given assemly as the given bind type.
 		/// </summary>
 		/// <param name="assembly"></param>
 		/// <param name="bindType"></param>
 		public void AutoBind(Assembly assembly, ComponentBindType bindType)
+		{
+			this.DoAutoBind(assembly, bindType, null);
+		}
+
+		/// <summary>
+		/// Performs auto binding on all the types which pass the where clause in the given assemly as the given bind type.
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="bindType"></param>
+		public void AutoBind(Assembly assembly, ComponentBindType bindType, Func<Type, bool> whereFunc)
+		{
+			if (whereFunc == null)
+				throw new ArgumentNullException("whereFunc");
+
+			this.DoAutoBind(assembly, bindType, whereFunc);
+		}
+
+		private void DoAutoBind(Assembly assembly, ComponentBindType bindType, Func<Type, bool> whereFunc)
 		{
 			if (assembly == null)
 				throw new ArgumentNullException("assembly");
 
 			Dictionary<Type, List<Type>> implementors = new Dictionary<Type, List<Type>>();
 
-			foreach (Type componentType in assembly.GetTypes())
+			IEnumerable<Type> types = assembly.GetTypes();
+
+			if (whereFunc != null)
+				types = types.Where(whereFunc);
+
+			foreach (Type componentType in types)
 			{
 				if (componentType.IsClass && !componentType.IsAbstract)
 				{
