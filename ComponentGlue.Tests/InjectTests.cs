@@ -10,7 +10,7 @@ namespace ComponentGlue.Tests
 	public class InjectTests
 	{
 		[Test]
-		public void InjectPropertiesWithDefaultBindings()
+		public void Inject_With_Default_Bindings()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IFoo>().To<Foo>();
@@ -27,7 +27,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void InjectPropertiesWithSpecificBindings()
+		public void Inject_With_Specific_Bindings()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
@@ -45,7 +45,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void InjectPropertiesWithSpecificBindingsOverrideDefaultBindings()
+		public void Inject_With_Specific_Bindings_Override_Default_Bindings()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IFoo>().To<Foo>();
@@ -63,7 +63,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void AfterCallToGetWhereNewInstanceIsConstructedPropertiesAreInjected()
+		public void After_Call_To_Get_Where_New_Instance_Is_Constructed_Properties_Are_Injected()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IFoo>().To<Foo>();
@@ -80,7 +80,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void CircularDependencyCanBeResolvedUsingPropertyInjectionAndSingletons()
+		public void Circular_Dependency_Can_Be_Resolved_Using_Property_Injection_And_Singletons()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton();

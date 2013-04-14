@@ -10,7 +10,7 @@ namespace ComponentGlue.Tests
 	public class ParentContainerTests
 	{
 		[Test]
-		public void ChildContainerProxiesToParentContainerWhenChildContainerHasNoBinding()
+		public void Child_Container_Proxies_To_Parent_Container_When_Child_Container_Has_No_Binding()
 		{
 			ComponentContainer parent = new ComponentContainer();
 			parent.Bind<IBaz>().To<Baz1>().AsSingleton();
@@ -26,7 +26,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void ChildContainerDoesNotProxyToParentContainerWhenChildContainerHasBinding()
+		public void Child_Container_Does_Not_Proxy_To_Parent_Container_When_Child_Container_Has_Binding()
 		{
 			ComponentContainer parent = new ComponentContainer();
 			parent.Bind<IBaz>().To<Baz1>().AsSingleton();

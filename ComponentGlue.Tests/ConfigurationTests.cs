@@ -11,21 +11,21 @@ namespace ComponentGlue.Tests
 	public class ConfigurationTests
 	{
 		[Test, ExpectedException]
-		public void AssigningInjectAttributeTypeToNullThrowsException()
+		public void Assigning_InjectAttributeType_To_Null_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = null;
 		}
 
 		[Test, ExpectedException]
-		public void AssigningInjectAttributeTypeToNonAttributeTypeThrowsException()
+		public void Assigning_InjectAttributeType_To_Non_Attribute_Type_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = typeof(ConfigurationTests);
 		}
 
 		[Test]
-		public void PropertiesCanBeInjectedWhenUsingCustomInjectAttribute()
+		public void Properties_Can_Be_Injected_When_Using_Custom_InjectAttribute()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = typeof(CustomInjectAttribute);
@@ -42,28 +42,28 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test, ExpectedException]
-		public void AssigningDefaultComponentAttributeTypeToNullThrowsException()
+		public void Assigning_DefaultComponentAttributeType_To_Null_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.DefaultComponentAttributeType = null;
 		}
 
 		[Test, ExpectedException]
-		public void AssigningDefaultComponentAttributeTypeToNonAttributeTypeThrowsException()
+		public void Assigning_DefaultComponentAttributeType_To_Non_Attribute_Type_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.DefaultComponentAttributeType = typeof(ConfigurationTests);
 		}
 
 		[Test, ExpectedException]
-		public void AssigningDefaultComponentAttributeTypeWhichDoesNotImplementIDefaultComponentAttributeThrowsException()
+		public void Assigning_DefaultComponentAttributeType_Where_Type_Does_Not_Implement_IDefaultComponentAttribute_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.DefaultComponentAttributeType = typeof(CustomInjectAttribute);
 		}
 
 		[Test]
-		public void ComponentsCanBeResolvedWhenUsingCustomDefaultComponentAttribute()
+		public void Components_Can_Be_Resolved_When_Using_Custom_DefaultComponentAttribute()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.DefaultComponentAttributeType = typeof(CustomDefaultComponentAttribute);

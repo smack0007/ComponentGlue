@@ -345,7 +345,7 @@ namespace ComponentGlue
 		{
 			return this.defaultBindings.Rebind(type);
 		}
-		
+
 		/// <summary>
 		/// Performs auto binding on all the types in the entry assembly as Transient.
 		/// </summary>
@@ -355,40 +355,25 @@ namespace ComponentGlue
 		}
 
 		/// <summary>
-		/// Performs auto binding on all the types in the entry assembly as the given bind type.
-		/// </summary>
-		public void AutoBind(ComponentBindType bindType)
-		{
-			this.DoAutoBind(Assembly.GetEntryAssembly(), bindType, null);
-		}
-
-		/// <summary>
-		/// Performs auto binding on all the types which pass the where clause in the entry assembly as the given bind type.
-		/// </summary>
-		public void AutoBind(ComponentBindType bindType, Func<Type, bool> whereFunc)
-		{
-			if (whereFunc == null)
-				throw new ArgumentNullException("whereFunc");
-
-			this.DoAutoBind(Assembly.GetEntryAssembly(), bindType, whereFunc);
-		}
-
-		/// <summary>
-		/// Performs auto binding on all the types in the given assembly as Transient.
-		/// </summary>
-		public void AutoBind(Assembly assembly)
-		{
-			this.DoAutoBind(assembly, default(ComponentBindType), null);
-		}
-
-		/// <summary>
-		/// Performs auto binding on all the types in the given assemly as the given bind type.
+		/// Performs auto binding on all the types under the given namespace in the given assemly as the given bind type.
 		/// </summary>
 		/// <param name="assembly"></param>
+		/// <param name="namespace"></param>
 		/// <param name="bindType"></param>
 		public void AutoBind(Assembly assembly, ComponentBindType bindType)
 		{
 			this.DoAutoBind(assembly, bindType, null);
+		}
+
+		/// <summary>
+		/// Performs auto binding on all the types under the given namespace in the given assemly as the given bind type.
+		/// </summary>
+		/// <param name="assembly"></param>
+		/// <param name="namespace"></param>
+		/// <param name="bindType"></param>
+		public void AutoBind(Assembly assembly, string @namespace, ComponentBindType bindType)
+		{
+			this.DoAutoBind(assembly, bindType, x => x.Namespace == @namespace);
 		}
 
 		/// <summary>

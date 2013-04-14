@@ -8,7 +8,7 @@ namespace ComponentGlue.Tests
 	public class AutoFactoryTests
 	{
 		[Test, ExpectedException(typeof(ComponentResolutionException))]
-		public void AutoFactoryNotCunstructedForFuncWithParams()
+		public void AutoFactory_Not_Constructed_For_Func_With_Params()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBaz>().To<Baz2>();
@@ -16,7 +16,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void AutoFactoryCallsBackToContainerFactoryMethod()
+		public void AutoFactory_Calls_Back_To_Container_Factory_Method()
 		{
 			bool containerFactoryMethodInvoked = false;
 
@@ -34,7 +34,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void AutoFactoryDoesNotOverrideBindings()
+		public void AutoFactory_Does_Not_Override_Bindings()
 		{
 			bool funcInvoked = false;
 

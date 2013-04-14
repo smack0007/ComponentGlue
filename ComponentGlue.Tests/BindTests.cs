@@ -11,7 +11,7 @@ namespace ComponentGlue.Tests
 	public class BindTests
 	{
 		[Test]
-		public void BindTypeAsTransientInjectsNewInstanceAlways()
+		public void Bind_Type_As_Transient_Injects_New_Instance_Always()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsTransient();
@@ -23,7 +23,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void BindTypeAsSingletonInjectsSameInstanceAlways()
+		public void Bind_Type_As_Singleton_Injects_Same_Instance_Always()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
@@ -35,14 +35,14 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test, ExpectedException(typeof(BindingSyntaxException))]
-		public void BindTypeWhichDoesNotImplementInterfaceThrowsException()
+		public void Bind_Type_Which_Does_Not_Implement_Interface_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Foo>();
 		}
 
 		[Test]
-		public void HasBindingReturnsTrueWhenBindingExists()
+		public void HasBinding_Returns_True_When_Binding_Exists()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IFoo>().To<Foo>();
@@ -51,7 +51,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void HasBindingReturnsFalseWhenBindingDoesNotExist()
+		public void HasBinding_Returns_False_When_Binding_Does_Not_Exist()
 		{
 			ComponentContainer container = new ComponentContainer();
 
@@ -59,7 +59,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void RebindAddsBindingWhenBindingDoesNotAlreadyExist()
+		public void Rebind_Adds_Binding_When_Binding_Does_Not_Already_Exist()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Rebind<IFoo>().To<Foo>();
@@ -68,7 +68,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void RebindDoesNotThrowExceptionWhenBindingAlreadyExists()
+		public void Rebind_Does_Not_Throw_Exception_When_Binding_Already_Exists()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
@@ -76,7 +76,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void SpecificBindingOverridesDefaultBinding()
+		public void Specific_Binding_Overrides_Default_Binding()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
@@ -88,7 +88,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void SpecificBindingWithDifferntBindTypeOverridesDefaultBinding()
+		public void Specific_Binding_With_Differnt_Type_Overrides_Default_Binding()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
@@ -101,14 +101,14 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test, ExpectedException(typeof(BindingSyntaxException))]
-		public void AsBindTypeConstantThrowsException()
+		public void As_BindType_Constant_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().As(ComponentBindType.Constant);
 		}
 
 		[Test]
-		public void BindToConstantDoesNotConstructNewInstance()
+		public void Bind_To_Constant_Does_Not_Construct_New_Instance()
 		{
 			ComponentContainer container = new ComponentContainer();
 
@@ -120,7 +120,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test, ExpectedException(typeof(BindingSyntaxException))]
-		public void BindToConstantWhereComponentNotNullAndIsNotInstanceOfTypeThrowsException()
+		public void Bind_ToConstant_Where_Component_Is_Not_Instance_Of_Type_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 
@@ -131,28 +131,28 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void BindToConstantWhereComponentIsNullDoesNotThrowsException()
+		public void Bind_ToConstant_Where_Component_Is_Null_Does_Not_Throw_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToConstant(null);
 		}
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
-		public void BindToFactoryMethodWhereMethodIsNullThrowsException()
+		public void Bind_ToFactoryMethod_Where_Method_Is_Null_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToFactoryMethod<Bar1>(null);
 		}
 
 		[Test, ExpectedException(typeof(BindingSyntaxException))]
-		public void BindToFactoryMethodWhereMethodReturnValueIsAssignableToInterfaceThrowsException()
+		public void Bind_ToFactoryMethod_Where_Return_Value_Is_Not_Assignable_To_Interface_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToFactoryMethod((x) => new Foo(new Bar1()));
 		}
 
 		[Test]
-		public void BindToFactoryMethodCallsFactoryMethodWhenResolving()
+		public void Bind_ToFactoryMethod_Calls_FactoryMethod_When_Resolving()
 		{
 			bool factoryMethodCalled = false;
 
