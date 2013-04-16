@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ComponentGlue.BindingSyntax
+namespace ComponentGlue
 {
 	public interface IBindingSyntaxAs
 	{
