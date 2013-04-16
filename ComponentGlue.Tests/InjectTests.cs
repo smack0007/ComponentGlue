@@ -70,7 +70,7 @@ namespace ComponentGlue.Tests
 			container.Bind<IBar>().To<Bar1>();
 			container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
-			var instance = container.Get<PropertyInject>();
+			var instance = container.Resolve<PropertyInject>();
 
 			Assert.NotNull(instance.Foo);
 			Assert.IsInstanceOf<Foo>(instance.Foo);
@@ -86,8 +86,8 @@ namespace ComponentGlue.Tests
 			container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton();
 			container.Bind<CircularDependencyProperty2>().ToSelf().AsSingleton();
 
-			var dependency1 = container.Get<CircularDependencyProperty1>();
-			var dependency2 = container.Get<CircularDependencyProperty2>();
+			var dependency1 = container.Resolve<CircularDependencyProperty1>();
+			var dependency2 = container.Resolve<CircularDependencyProperty2>();
 
 			Assert.NotNull(dependency1.Dependency);
 			Assert.IsInstanceOf<CircularDependencyProperty2>(dependency1.Dependency);

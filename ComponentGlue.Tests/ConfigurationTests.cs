@@ -32,7 +32,7 @@ namespace ComponentGlue.Tests
 			container.Bind<IFoo>().To<Foo>();
 			container.Bind<IBar>().To<Bar1>();
 
-			CustomAttributePropertyInject instance = container.Get<CustomAttributePropertyInject>();
+			CustomAttributePropertyInject instance = container.Resolve<CustomAttributePropertyInject>();
 
 			Assert.IsNotNull(instance.Foo);
 			Assert.IsInstanceOf<Foo>(instance.Foo);
@@ -69,7 +69,7 @@ namespace ComponentGlue.Tests
 			container.DefaultComponentAttributeType = typeof(CustomDefaultComponentAttribute);
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
-			IBar bar = container.Get<IBar>();
+			IBar bar = container.Resolve<IBar>();
 			Assert.IsInstanceOf<BarWithCustomDefaultComponentAttribte>(bar);
 		}
 	}

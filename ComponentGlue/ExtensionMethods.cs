@@ -10,9 +10,9 @@ namespace ComponentGlue
 		/// </summary>
 		/// <typeparam name="TComponentType"></typeparam>
 		/// <returns></returns>
-		public static TComponentType Get<TComponentType>(this IComponentContainer container)
+		public static TComponentType Resolve<TComponentType>(this IComponentContainer container)
 		{
-			return (TComponentType)container.Get(typeof(TComponentType));
+			return (TComponentType)container.Resolve(typeof(TComponentType));
 		}
 
 		/// <summary>

@@ -16,8 +16,8 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsTransient();
 
-			Foo foo1 = container.Get<Foo>();
-			Foo foo2 = container.Get<Foo>();
+			Foo foo1 = container.Resolve<Foo>();
+			Foo foo2 = container.Resolve<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -28,8 +28,8 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
 
-			Foo foo1 = container.Get<Foo>();
-			Foo foo2 = container.Get<Foo>();
+			Foo foo1 = container.Resolve<Foo>();
+			Foo foo2 = container.Resolve<Foo>();
 
 			Assert.AreSame(foo1.Bar, foo2.Bar);
 		}
@@ -82,7 +82,7 @@ namespace ComponentGlue.Tests
 			container.Bind<IBar>().To<Bar1>();
 			container.For<Foo>().Bind<IBar>().To<Bar2>();
 
-			Foo foo = container.Get<Foo>();
+			Foo foo = container.Resolve<Foo>();
 
 			Assert.IsInstanceOf<Bar2>(foo.Bar);
 		}
@@ -94,8 +94,8 @@ namespace ComponentGlue.Tests
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
 			container.For<Foo>().Bind<IBar>().To<Bar2>().AsTransient();
 
-			Foo foo1 = container.Get<Foo>();
-			Foo foo2 = container.Get<Foo>();
+			Foo foo1 = container.Resolve<Foo>();
+			Foo foo2 = container.Resolve<Foo>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -115,7 +115,7 @@ namespace ComponentGlue.Tests
 			IBar bar = new Bar1();
 			container.Bind<IBar>().ToConstant(bar);
 
-			Foo foo = container.Get<Foo>();
+			Foo foo = container.Resolve<Foo>();
 			Assert.AreSame(bar, foo.Bar);
 		}
 
@@ -163,7 +163,7 @@ namespace ComponentGlue.Tests
 				return new Bar1();
 			});
 
-			IBar bar = container.Get<IBar>();
+			IBar bar = container.Resolve<IBar>();
 			Assert.IsTrue(factoryMethodCalled);
 		}
 	}

@@ -12,7 +12,7 @@ namespace ComponentGlue.Tests
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBaz>().To<Baz2>();
-			container.Get<FuncClassWithOneParam<string, IBaz>>();
+			container.Resolve<FuncClassWithOneParam<string, IBaz>>();
 		}
 
 		[Test]
@@ -27,7 +27,7 @@ namespace ComponentGlue.Tests
 				return new Baz2();
 			});
 
-			FuncClass<IBaz> funcClass = container.Get<FuncClass<IBaz>>();
+			FuncClass<IBaz> funcClass = container.Resolve<FuncClass<IBaz>>();
 			IBaz baz = funcClass.InvokeFunc();
 
 			Assert.IsTrue(containerFactoryMethodInvoked);
@@ -45,7 +45,7 @@ namespace ComponentGlue.Tests
 				return new Baz2();
 			}));
 
-			FuncClass<IBaz> funcClass = container.Get<FuncClass<IBaz>>();
+			FuncClass<IBaz> funcClass = container.Resolve<FuncClass<IBaz>>();
 			IBaz baz = funcClass.InvokeFunc();
 
 			Assert.IsTrue(funcInvoked);

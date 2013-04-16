@@ -17,7 +17,7 @@ namespace ComponentGlue.Tests
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
 			Assert.IsTrue(container.HasBinding<ISimple>());
-			Assert.IsInstanceOf(typeof(ISimple), container.Get<ISimple>());
+			Assert.IsInstanceOf(typeof(ISimple), container.Resolve<ISimple>());
 		}
 
 		[Test]
@@ -27,7 +27,7 @@ namespace ComponentGlue.Tests
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
 			Assert.IsTrue(container.HasBinding<IBaz>());
-			Assert.IsInstanceOf(typeof(Baz1), container.Get<IBaz>());
+			Assert.IsInstanceOf(typeof(Baz1), container.Resolve<IBaz>());
 		}
 
 		[Test]
@@ -36,7 +36,7 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
-			IFoo foo = container.Get<IFoo>();
+			IFoo foo = container.Resolve<IFoo>();
 			Assert.IsInstanceOf(typeof(Foo), foo);
 			Assert.IsInstanceOf(typeof(Bar3), ((Foo)foo).Bar);
 			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)((Foo)foo).Bar).Baz);
@@ -48,8 +48,8 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
 
-			IFoo foo1 = container.Get<IFoo>();
-			IFoo foo2 = container.Get<IFoo>();
+			IFoo foo1 = container.Resolve<IFoo>();
+			IFoo foo2 = container.Resolve<IFoo>();
 
 			Assert.AreSame(foo1, foo2);
 		}
@@ -60,7 +60,7 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
-			ConcreteAB ab = container.Get<ConcreteAB>();
+			ConcreteAB ab = container.Resolve<ConcreteAB>();
 			Assert.NotNull(ab.A);
 			Assert.NotNull(ab.B);
 		}
@@ -71,8 +71,8 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
 
-			ConcreteAB ab1 = container.Get<ConcreteAB>();
-			ConcreteAB ab2 = container.Get<ConcreteAB>();
+			ConcreteAB ab1 = container.Resolve<ConcreteAB>();
+			ConcreteAB ab2 = container.Resolve<ConcreteAB>();
 
 			Assert.AreSame(ab1, ab2);
 		}

@@ -75,7 +75,7 @@
     <Compile Include="Classes\IBar.cs" />
     <Compile Include="Classes\IBaz.cs" />
     <Compile Include="Classes\IFoo.cs" />
-    <Compile Include="GetTests.cs" />
+    <Compile Include="ResolveTests.cs" />
     <Compile Include="InjectTests.cs" />
     <Compile Include="Classes\NeedsContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

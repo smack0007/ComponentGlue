@@ -10,9 +10,9 @@ namespace ComponentGlue.Demo
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind();
 
-			IFoo foo = container.Get<IFoo>();
+			IFoo foo = container.Resolve<IFoo>();
 
-			Func<IFoo> factory = container.Get<Func<IFoo>>();
+			Func<IFoo> factory = container.Resolve<Func<IFoo>>();
 			IFoo foo2 = factory();
 		}
 	}

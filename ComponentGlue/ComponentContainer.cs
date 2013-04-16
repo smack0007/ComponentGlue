@@ -102,7 +102,7 @@ namespace ComponentGlue
 
 		private Func<T> ConstructAutoFactory<T>()
 		{
-			return () => { return (T)this.Get(typeof(T)); };
+			return () => { return (T)this.Resolve(typeof(T)); };
 		}
 
 		/// <summary>
@@ -189,7 +189,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public object Get(Type type)
+		public object Resolve(Type type)
 		{
 			object component = null;
 
@@ -202,7 +202,7 @@ namespace ComponentGlue
 				}
 				else if (this.parent != null) // Proxy to parent container if available
 				{
-					component = this.parent.Get(type);
+					component = this.parent.Resolve(type);
 				}
 			}
 			else

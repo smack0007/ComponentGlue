@@ -12,7 +12,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		object Get(Type type);
+		object Resolve(Type type);
 
 		/// <summary>
 		/// Injects components into the properties of the instance marked with an Inject attribute.
