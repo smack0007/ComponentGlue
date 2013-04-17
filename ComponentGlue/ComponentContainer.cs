@@ -100,10 +100,115 @@ namespace ComponentGlue
 				throw new InvalidOperationException(string.Format("{0} is not an Attribute type.", type));
 		}
 
+        private bool IsAutoFactoryType(Type type)
+        {
+            if (typeof(MulticastDelegate).IsAssignableFrom(type))
+            {
+                MethodInfo method = type.GetMethod("Invoke");
+                if (method.GetParameters().Length == 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 		private Func<T> ConstructAutoFactory<T>()
 		{
 			return () => { return (T)this.Resolve(typeof(T)); };
 		}
+
+        /// <summary>
+        /// Examines the given type and constructs an AutoFactory if the type is correct.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private object TryConstructAutoFactory(Type type)
+        {
+            if (typeof(MulticastDelegate).IsAssignableFrom(type))
+            {
+                MethodInfo method = type.GetMethod("Invoke");
+                if (method.GetParameters().Length == 0)
+                {
+                    MethodInfo constructMethod = this.GetType().GetMethod("ConstructAutoFactory", BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(method.ReturnType);
+                    return constructMethod.Invoke(this, null);
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the constructor which should be used for the given type.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private ConstructorInfo GetConstructorToInject(Type type)
+        {
+            ConstructorInfo injectableConstructor = null;
+            ConstructorInfo[] constructors = type.GetConstructors();
+
+            if (constructors.Length == 1)
+            {
+                injectableConstructor = constructors[0];
+            }
+            else
+            {
+                foreach (ConstructorInfo constructor in constructors)
+                {
+                    if (constructor.GetParameters().Length == 0)
+                        injectableConstructor = constructor;
+
+                    foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
+                    {
+                        if (injectableConstructor != null)
+                            throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", type));
+
+                        injectableConstructor = constructor;
+                    }
+                }
+            }
+
+            if (injectableConstructor == null)
+                throw new ComponentResolutionException(string.Format("No injectable or default constructor found for type {0}.", type));
+
+            return injectableConstructor;
+        }
+        
+        /// <summary>
+        /// Builds an array of parameters to be injected into a constructor.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="constructor"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        private object[] BuildConstructorParameters(Type type, ConstructorInfo constructor, Dictionary<string, object> parameters)
+        {
+            ParameterInfo[] constructorParameters = constructor.GetParameters();
+            object[] parametersToInject = new object[constructorParameters.Length];
+
+            for (int i = 0; i < constructorParameters.Length; i++)
+            {
+                if (parameters != null && parameters.ContainsKey(constructorParameters[i].Name))
+                {
+                    parametersToInject[i] = parameters[constructorParameters[i].Name];
+                }
+                else
+                {
+                    try
+                    {
+                        parametersToInject[i] = this.FetchComponentForInjection(type, constructorParameters[i].ParameterType);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ComponentResolutionException(string.Format("Failed while resolving constructor parameter \"{0}\" for type \"{1}\".", constructorParameters[i].Name, type), ex);
+                    }
+                }
+            }
+
+            return parametersToInject;
+        }
 
 		/// <summary>
 		/// Constructs a new instance of a type.
@@ -125,62 +230,17 @@ namespace ComponentGlue
 						
 			object component = null;
 
-			if (typeof(MulticastDelegate).IsAssignableFrom(type))
+            component = this.TryConstructAutoFactory(type);
+
+			if (component == null)
 			{
-				MethodInfo method = type.GetMethod("Invoke");
-				if (method.GetParameters().Length == 0)
-				{					
-					MethodInfo constructMethod = this.GetType().GetMethod("ConstructAutoFactory", BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(method.ReturnType);
-					component = constructMethod.Invoke(this, null);
-				}
-			}
-			else
-			{
-				ConstructorInfo injectableConstructor = null;
-				ConstructorInfo[] constructors = type.GetConstructors();
+                ConstructorInfo constructor = this.GetConstructorToInject(type);
 
-				if (constructors.Length == 1)
-				{
-					injectableConstructor = constructors[0];
-				}
-				else
-				{
-					foreach (ConstructorInfo constructor in constructors)
-					{
-						if (constructor.GetParameters().Length == 0)
-							injectableConstructor = constructor;
-
-						foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
-						{
-							if (injectableConstructor != null)
-								throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", type));
-
-							injectableConstructor = constructor;
-						}
-					}
-				}
-
-				if (injectableConstructor == null)
-					throw new ComponentResolutionException(string.Format("No injectable or default constructor found for type {0}.", type));
-
-				ParameterInfo[] constructorParameters = injectableConstructor.GetParameters();
-                object[] injectParameters = new object[constructorParameters.Length];
-
-                for (int i = 0; i < constructorParameters.Length; i++)
-                {
-                    if (parameters != null && parameters.ContainsKey(constructorParameters[i].Name))
-                    {
-                        injectParameters[i] = parameters[constructorParameters[i].Name];
-                    }
-                    else
-                    {
-                        injectParameters[i] = this.FetchComponentForInjection(type, constructorParameters[i].ParameterType);
-                    }
-                }
-
+                object[] constructorParameters = this.BuildConstructorParameters(type, constructor, parameters);
+                		
 				try
 				{
-					component = injectableConstructor.Invoke(injectParameters);
+					component = constructor.Invoke(constructorParameters);
 				}
 				catch (TargetInvocationException ex)
 				{
