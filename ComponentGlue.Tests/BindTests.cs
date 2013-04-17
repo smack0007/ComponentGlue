@@ -166,5 +166,32 @@ namespace ComponentGlue.Tests
 			IBar bar = container.Resolve<IBar>();
 			Assert.IsTrue(factoryMethodCalled);
 		}
+
+        [Test]
+        public void WithConstuctorParameter_Is_Passed_To_Constructor()
+        {
+            ComponentContainer container = new ComponentContainer();
+            
+            container.Bind<Has1Param>()
+                .ToSelf()
+                .WithConstructorParameter("name", "Steve");
+
+            var obj = container.Resolve<Has1Param>();
+            Assert.AreEqual("Steve", obj.Name);
+        }
+
+        [Test]
+        public void Multiple_Calls_To_WithConstructorParameter_Are_Passed_To_Constructor()
+        {
+            ComponentContainer container = new ComponentContainer();
+            
+            container.Bind<Has2Params>().ToSelf()
+                .WithConstructorParameter("name", "Steve")
+                .WithConstructorParameter("age", 12);
+
+            var obj = container.Resolve<Has2Params>();
+            Assert.AreEqual("Steve", obj.Name);
+            Assert.AreEqual(12, obj.Age);
+        }
 	}
 }

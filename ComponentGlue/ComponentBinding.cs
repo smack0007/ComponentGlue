@@ -1,9 +1,10 @@
 ﻿using System;
 using ComponentGlue.BindingSyntax;
+using System.Collections.Generic;
 
 namespace ComponentGlue
 {
-	public class ComponentBinding : IBindingSyntaxTo, IBindingSyntaxAs
+	internal class ComponentBinding : IBindingSyntaxTo, IBindingSyntaxAsWith
 	{
 		/// <summary>
 		/// The type of component which is bound.
@@ -50,6 +51,12 @@ namespace ComponentGlue
 			private set;
 		}
 
+        internal Dictionary<string, object> ConstructorParameters
+        {
+            get;
+            private set;
+        }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -61,24 +68,24 @@ namespace ComponentGlue
 			this.BindType = ComponentBindType.Transient;
 		}
 
-		private void EnsureComponentIsAssignableToInterface(Type componentType)
+		private void EnsureComponentTypeIsAssignableFromConcreteType(Type concrete)
 		{
-			if (!this.ComponentType.IsAssignableFrom(componentType))
-				throw new BindingSyntaxException(string.Format("Type {0} is not assignable to type {1}.", componentType, this.ComponentType));
+			if (!this.ComponentType.IsAssignableFrom(concrete))
+				throw new BindingSyntaxException(string.Format("Type {0} is not assignable to type {1}.", concrete, this.ComponentType));
 		}
 
-		public IBindingSyntaxAs To(Type componentType)
+		public IBindingSyntaxAsWith To(Type componentType)
 		{
 			if (this.Constant != null || this.FactoryMethod != null)
 				throw new InvalidOperationException("ComponentType may not be modified once a Constant or FactoryMethod is assigned.");
 
-			this.EnsureComponentIsAssignableToInterface(componentType);
+			this.EnsureComponentTypeIsAssignableFromConcreteType(componentType);
 			
 			this.ConcreteType = componentType;
 			return this;
 		}
 				
-		public IBindingSyntaxAs ToSelf()
+		public IBindingSyntaxAsWith ToSelf()
 		{
 			this.ConcreteType = this.ComponentType;
 			return this;
@@ -87,7 +94,7 @@ namespace ComponentGlue
 		public void ToConstant(object value)
 		{
 			if (value != null)
-				this.EnsureComponentIsAssignableToInterface(value.GetType());
+				this.EnsureComponentTypeIsAssignableFromConcreteType(value.GetType());
 
 			this.BindType = ComponentBindType.Constant;
 			this.Constant = value;
@@ -98,13 +105,13 @@ namespace ComponentGlue
 			if (factoryMethod == null)
 				throw new ArgumentNullException("facotryMethod");
 
-			this.EnsureComponentIsAssignableToInterface(typeof(T));
+			this.EnsureComponentTypeIsAssignableFromConcreteType(typeof(T));
 
 			this.BindType = ComponentBindType.FactoryMethod;
 			this.FactoryMethod = (container) => { return (object)factoryMethod(container); };
 		}
 
-		public void As(ComponentBindType bindType)
+		public IBindingSyntaxAsWith As(ComponentBindType bindType)
 		{
 			if (bindType == ComponentBindType.Constant)
 				throw new BindingSyntaxException("ComponentBindType.Constant not valid for the As() method.");
@@ -113,16 +120,33 @@ namespace ComponentGlue
 				throw new BindingSyntaxException("ComponentBindType.FactoryMethod not valid for the As() method.");
 
 			this.BindType = bindType;
+
+            return this;
 		}
 
-		public void AsSingleton()
+        public IBindingSyntaxAsWith AsSingleton()
 		{
 			this.BindType = ComponentBindType.Singleton;
+            return this;
 		}
 
-		public void AsTransient()
+        public IBindingSyntaxAsWith AsTransient()
 		{
 			this.BindType = ComponentBindType.Transient;
+            return this;
 		}
+
+        public IBindingSyntaxAsWith WithConstructorParameter(string paramName, object paramValue)
+        {
+            if (this.ConstructorParameters == null)
+                this.ConstructorParameters = new Dictionary<string, object>();
+
+            if (this.ConstructorParameters.ContainsKey(paramName))
+                throw new BindingSyntaxException(string.Format("Parameter \"{0}\" is already set for the component type \"{1\".", paramName, this.ComponentType));
+
+            this.ConstructorParameters[paramName] = paramValue;
+
+            return this;
+        }
 	}
 }

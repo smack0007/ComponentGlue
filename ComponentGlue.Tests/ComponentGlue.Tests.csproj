@@ -60,6 +60,8 @@
     <Compile Include="Classes\CustomAttributePropertyInject.cs" />
     <Compile Include="Classes\BarWithCustomDefaultComponentAttribte.cs" />
     <Compile Include="Classes\FuncClassWithOneParam.cs" />
+    <Compile Include="Classes\Has1Param.cs" />
+    <Compile Include="Classes\Has2Params.cs" />
     <Compile Include="Classes\ISimple.cs" />
     <Compile Include="Classes\Simple.cs" />
     <Compile Include="ConfigurationTests.cs" />
@@ -76,7 +78,7 @@
     <Compile Include="Classes\IBaz.cs" />
     <Compile Include="Classes\IFoo.cs" />
     <Compile Include="ResolveTests.cs" />
-    <Compile Include="InjectTests.cs" />
+    <Compile Include="ResolvePropertiesTests.cs" />
     <Compile Include="Classes\NeedsContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\PropertyInject.cs" />

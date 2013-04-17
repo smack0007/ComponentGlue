@@ -10,11 +10,17 @@ namespace ComponentGlue.Demo
 			get;
 			private set;
 		}
-		
-		[Inject]
-		public Foo(IBar bar)
+
+        public string Name
+        {
+            get;
+            private set;
+        }
+
+		public Foo(IBar bar, string name)
 		{
 			this.Bar = bar;
+            this.Name = name;
 		}
 	}
 }

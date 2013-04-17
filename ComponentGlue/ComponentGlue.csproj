@@ -57,7 +57,7 @@
     <Compile Include="InjectAttribute.cs" />
     <Compile Include="ComponentContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IBindingSyntaxAs.cs" />
+    <Compile Include="IBindingSyntaxAsWith.cs" />
     <Compile Include="IBindingSyntaxBind.cs" />
     <Compile Include="IBindingSyntaxTo.cs" />
   </ItemGroup>

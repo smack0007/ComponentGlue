@@ -110,7 +110,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		private object Construct(Type type)
+		private object ConstructComponent(Type type, Dictionary<string, object> parameters)
 		{
 			if (type.IsInterface)
 				throw new ComponentResolutionException(string.Format("{0} is an interface and cannot be constructed.", type));
@@ -163,15 +163,24 @@ namespace ComponentGlue
 				if (injectableConstructor == null)
 					throw new ComponentResolutionException(string.Format("No injectable or default constructor found for type {0}.", type));
 
-				ParameterInfo[] parameters = injectableConstructor.GetParameters();
-				object[] injectComponents = new object[parameters.Length];
+				ParameterInfo[] constructorParameters = injectableConstructor.GetParameters();
+                object[] injectParameters = new object[constructorParameters.Length];
 
-				for (int i = 0; i < parameters.Length; i++)
-					injectComponents[i] = this.FetchComponentForInjection(type, parameters[i].ParameterType);
+                for (int i = 0; i < constructorParameters.Length; i++)
+                {
+                    if (parameters != null && parameters.ContainsKey(constructorParameters[i].Name))
+                    {
+                        injectParameters[i] = parameters[constructorParameters[i].Name];
+                    }
+                    else
+                    {
+                        injectParameters[i] = this.FetchComponentForInjection(type, constructorParameters[i].ParameterType);
+                    }
+                }
 
 				try
 				{
-					component = injectableConstructor.Invoke(injectComponents);
+					component = injectableConstructor.Invoke(injectParameters);
 				}
 				catch (TargetInvocationException ex)
 				{
@@ -192,32 +201,27 @@ namespace ComponentGlue
 		public object Resolve(Type type)
 		{
 			object component = null;
-
-			if (type.IsInterface)
+            			
+			// Default bindings
+			if (this.defaultBindings.HasBinding(type))
 			{
-				// Default bindings
-				if (this.defaultBindings.HasBinding(type))
-				{
-					component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(type));
-				}
-				else if (this.parent != null) // Proxy to parent container if available
-				{
-					component = this.parent.Resolve(type);
-				}
+				component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(type));
 			}
 			else
 			{
-				if (this.defaultBindings.HasBinding(type))
-				{
-					component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(type));
-				}
-				else
-				{
-					component = this.Construct(type);
-					this.Inject(component);
-				}
+                if (type.IsInterface) 
+                {
+                    // Proxy to parent container if available
+                    if (this.parent != null)
+				        component = this.parent.Resolve(type);
+                }
+                else
+                {
+                    component = this.ConstructComponent(type, null);
+					this.ResolveProperties(component);
+                }
 			}
-
+			
 			if (component == null)
 				throw new ComponentResolutionException(string.Format("Unable to reslove type {0}.", type));
 
@@ -239,16 +243,16 @@ namespace ComponentGlue
 			switch (binding.BindType)
 			{
 				case ComponentBindType.Transient:
-					component = this.Construct(binding.ConcreteType);
-					this.Inject(component);
+					component = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
+					this.ResolveProperties(component);
 					break;
 
 				case ComponentBindType.Singleton:
 					if(!this.components.ContainsKey(binding.ComponentType))
 					{
-						component = this.Construct(binding.ConcreteType);
+						component = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
 						this.components[binding.ComponentType] = component;
-						this.Inject(component);
+						this.ResolveProperties(component);
 					}
 					else
 					{
@@ -292,7 +296,7 @@ namespace ComponentGlue
 
 			// Component not found
 			if (component == null)
-				component = this.Construct(componentType);
+				component = this.ConstructComponent(componentType, null);
 
 			return component;
 		}
@@ -301,7 +305,7 @@ namespace ComponentGlue
 		/// Injects components into the properties of the instance marked with an Inject attribute.
 		/// </summary>
 		/// <param name="instance"></param>
-		public void Inject(object instance)
+		public void ResolveProperties(object instance)
 		{
 			if (instance == null)
 				throw new ArgumentNullException("instance");

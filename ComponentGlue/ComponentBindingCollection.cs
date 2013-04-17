@@ -5,7 +5,7 @@ using ComponentGlue.BindingSyntax;
 
 namespace ComponentGlue
 {
-	public class ComponentBindingCollection : IBindingSyntaxBind
+	internal class ComponentBindingCollection : IBindingSyntaxBind
 	{
 		Dictionary<Type, ComponentBinding> bindings;
 

@@ -15,9 +15,9 @@ namespace ComponentGlue
 		object Resolve(Type type);
 
 		/// <summary>
-		/// Injects components into the properties of the instance marked with an Inject attribute.
+        /// Injects components into the instance, setting properties of the object marked with an Inject attribute.
 		/// </summary>
 		/// <param name="instance"></param>
-		void Inject(object component);
+		void ResolveProperties(object component);
 	}
 }
