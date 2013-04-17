@@ -166,9 +166,9 @@ namespace ComponentGlue.Tests
 			IBar bar = container.Resolve<IBar>();
 			Assert.IsTrue(factoryMethodCalled);
 		}
-
+                
         [Test]
-        public void WithConstuctorParameter_Is_Passed_To_Constructor()
+        public void WithConstructorParameter_Is_Passed_To_Constructor()
         {
             ComponentContainer container = new ComponentContainer();
             
@@ -192,6 +192,38 @@ namespace ComponentGlue.Tests
             var obj = container.Resolve<Has2Params>();
             Assert.AreEqual("Steve", obj.Name);
             Assert.AreEqual(12, obj.Age);
+        }
+
+        [Test]
+        public void WithConstructorParameter_Overrides_Default_Bindings()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            Bar1 bar = new Bar1();
+
+            container.Bind<IFoo>().To<Foo>()
+                .WithConstructorParameter("bar", bar);
+
+            container.Bind<IBar>().To<Bar2>();
+
+            var obj = container.Resolve<IFoo>();
+            Assert.AreSame(bar, ((Foo)obj).Bar);
+        }
+
+        [Test]
+        public void WithConstructorParameter_Overrides_Specific_Bindings()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            Bar1 bar = new Bar1();
+
+            container.Bind<IFoo>().To<Foo>()
+                .WithConstructorParameter("bar", bar);
+
+            container.For<IFoo>().Bind<IBar>().To<Bar2>();
+
+            var obj = container.Resolve<IFoo>();
+            Assert.AreSame(bar, ((Foo)obj).Bar);
         }
 	}
 }

@@ -283,7 +283,7 @@ namespace ComponentGlue
 			}
 			
 			if (component == null)
-				throw new ComponentResolutionException(string.Format("Unable to reslove type {0}.", type));
+				throw new ComponentResolutionException(string.Format("Unable to resolve type {0}.", type));
 
 			return component;
 		}
@@ -295,9 +295,6 @@ namespace ComponentGlue
 		/// <returns></returns>
 		private object FetchComponentByBinding(ComponentBinding binding)
 		{
-			if (binding == null)
-				throw new ArgumentNullException("binding");
-
 			object component = null;
 
 			switch (binding.BindType)
@@ -379,7 +376,7 @@ namespace ComponentGlue
 					if (this.injectAttributeType.IsInstanceOfType(attribute))
 					{
 						if (!property.CanWrite)
-							throw new ComponentResolutionException(property.Name + " is marked as Inject but not writable.");
+							throw new ComponentResolutionException(string.Format("Property \"{0}\" of type \"{1}\" is marked as Inject but not writable.", property.Name, type));
 
 						property.SetValue(instance, FetchComponentForInjection(type, property.PropertyType), null);
 					}
