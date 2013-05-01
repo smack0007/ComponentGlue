@@ -113,13 +113,15 @@ namespace ComponentGlue
 
 		public IBindingSyntaxAsWith As(ComponentBindType bindType)
 		{
-			if (bindType == ComponentBindType.Constant)
-				throw new BindingSyntaxException("ComponentBindType.Constant not valid for the As() method.");
-
-			if (bindType == ComponentBindType.FactoryMethod)
-				throw new BindingSyntaxException("ComponentBindType.FactoryMethod not valid for the As() method.");
-
-			this.BindType = bindType;
+            if (bindType == ComponentBindType.Singleton ||
+                bindType == ComponentBindType.Transient)
+            {
+                this.BindType = bindType;
+            }
+            else
+            {
+                throw new BindingSyntaxException(string.Format("ComponentBindType.{0} not valid for the As() method.", bindType.ToString()));
+            }
 
             return this;
 		}

@@ -137,6 +137,13 @@ namespace ComponentGlue.Tests
 			container.Bind<IBar>().ToConstant(null);
 		}
 
+        [Test, ExpectedException(typeof(BindingSyntaxException))]
+        public void As_BindType_FactoryMethod_Throws_Exception()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().To<Bar1>().As(ComponentBindType.FactoryMethod);
+        }
+
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void Bind_ToFactoryMethod_Where_Method_Is_Null_Throws_Exception()
 		{
