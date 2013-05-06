@@ -9,7 +9,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The type of component which is bound.
 		/// </summary>
-		internal Type ComponentType
+		public Type ComponentType
 		{
 			get;
 			private set;
@@ -18,7 +18,7 @@ namespace ComponentGlue
 		/// <summary>
 		/// The concrete type to which the component is bound.
 		/// </summary>
-		internal Type ConcreteType
+        public Type ConcreteType
 		{
 			get;
 			private set;
@@ -27,31 +27,22 @@ namespace ComponentGlue
 		/// <summary>
 		/// The type of binding.
 		/// </summary>
-		internal ComponentBindType BindType
+        public ComponentBindType BindType
 		{
 			get;
 			private set;
 		}
 
 		/// <summary>
-		/// The bound constant object.
+		/// Data object related to the binding.
 		/// </summary>
-		internal object Constant
+        public object Data
 		{
 			get;
 			private set;
 		}
-
-		/// <summary>
-		/// The factory method.
-		/// </summary>
-		internal Func<IComponentResolver, object> FactoryMethod
-		{
-			get;
-			private set;
-		}
-
-        internal Dictionary<string, object> ConstructorParameters
+        		
+        public Dictionary<string, object> ConstructorParameters
         {
             get;
             private set;
@@ -76,9 +67,6 @@ namespace ComponentGlue
 
 		public IBindingSyntaxAsWith To(Type componentType)
 		{
-			if (this.Constant != null || this.FactoryMethod != null)
-				throw new InvalidOperationException("ComponentType may not be modified once a Constant or FactoryMethod is assigned.");
-
 			this.EnsureComponentTypeIsAssignableFromConcreteType(componentType);
 			
 			this.ConcreteType = componentType;
@@ -97,7 +85,7 @@ namespace ComponentGlue
 				this.EnsureComponentTypeIsAssignableFromConcreteType(value.GetType());
 
 			this.BindType = ComponentBindType.Constant;
-			this.Constant = value;
+			this.Data = value;
 		}
 
 		public void ToFactoryMethod<T>(Func<IComponentResolver, T> factoryMethod)
@@ -108,7 +96,7 @@ namespace ComponentGlue
 			this.EnsureComponentTypeIsAssignableFromConcreteType(typeof(T));
 
 			this.BindType = ComponentBindType.FactoryMethod;
-			this.FactoryMethod = (container) => { return (object)factoryMethod(container); };
+			this.Data = new Func<IComponentContainer, object>((container) => { return (object)factoryMethod(container); });
 		}
 
 		public IBindingSyntaxAsWith As(ComponentBindType bindType)

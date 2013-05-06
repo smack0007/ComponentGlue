@@ -318,11 +318,11 @@ namespace ComponentGlue
 					break;
 									
 				case ComponentBindType.Constant:
-					component = binding.Constant;
+					component = binding.Data;
 					break;
 
 				case ComponentBindType.FactoryMethod:
-					component = binding.FactoryMethod(this);
+					component = ((Func<IComponentContainer, object>)binding.Data)(this);
 					break;
 			}
 			
