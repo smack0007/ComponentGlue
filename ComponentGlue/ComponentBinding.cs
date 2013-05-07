@@ -48,6 +48,15 @@ namespace ComponentGlue
             private set;
         }
 
+        /// <summary>
+        /// Used if the binding is a singleton to store the result of the resolution.
+        /// </summary>
+        public object SingletonInstance
+        {
+            get;
+            set;
+        }
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>

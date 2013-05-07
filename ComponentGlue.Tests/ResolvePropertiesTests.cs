@@ -13,14 +13,14 @@ namespace ComponentGlue.Tests
 		public void With_Default_Bindings()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IFoo>().To<Foo1>();
 			container.Bind<IBar>().To<Bar2>();
 
 			var instance = new PropertyInject();
 			container.ResolveProperties(instance);
 
 			Assert.NotNull(instance.Foo);
-			Assert.IsInstanceOf<Foo>(instance.Foo);
+			Assert.IsInstanceOf<Foo1>(instance.Foo);
 
 			Assert.NotNull(instance.Bar);
 			Assert.IsInstanceOf<Bar2>(instance.Bar);
@@ -31,14 +31,14 @@ namespace ComponentGlue.Tests
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
-			container.For<PropertyInject>().Bind<IFoo>().To<Foo>();
+			container.For<PropertyInject>().Bind<IFoo>().To<Foo1>();
 			container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
 			var instance = new PropertyInject();
 			container.ResolveProperties(instance);
 
 			Assert.NotNull(instance.Foo);
-			Assert.IsInstanceOf<Foo>(instance.Foo);
+			Assert.IsInstanceOf<Foo1>(instance.Foo);
 
 			Assert.NotNull(instance.Bar);
 			Assert.IsInstanceOf<Bar2>(instance.Bar);
@@ -48,7 +48,7 @@ namespace ComponentGlue.Tests
 		public void Specific_Bindings_Override_Default_Bindings()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IFoo>().To<Foo1>();
 			container.Bind<IBar>().To<Bar1>();
 			container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
@@ -56,7 +56,7 @@ namespace ComponentGlue.Tests
 			container.ResolveProperties(instance);
 
 			Assert.NotNull(instance.Foo);
-			Assert.IsInstanceOf<Foo>(instance.Foo);
+			Assert.IsInstanceOf<Foo1>(instance.Foo);
 
 			Assert.NotNull(instance.Bar);
 			Assert.IsInstanceOf<Bar2>(instance.Bar);

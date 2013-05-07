@@ -29,13 +29,13 @@ namespace ComponentGlue.Tests
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.InjectAttributeType = typeof(CustomInjectAttribute);
-			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IFoo>().To<Foo1>();
 			container.Bind<IBar>().To<Bar1>();
 
 			CustomAttributePropertyInject instance = container.Resolve<CustomAttributePropertyInject>();
 
 			Assert.IsNotNull(instance.Foo);
-			Assert.IsInstanceOf<Foo>(instance.Foo);
+			Assert.IsInstanceOf<Foo1>(instance.Foo);
 
 			Assert.IsNotNull(instance.Bar);
 			Assert.IsInstanceOf<Bar1>(instance.Bar);

@@ -49,6 +49,7 @@
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="AutoFactoryTests.cs" />
     <Compile Include="BindTests.cs" />
+    <Compile Include="Classes\Foo2.cs" />
     <Compile Include="Classes\FuncClass.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
     <Compile Include="Classes\CircularDependency2.cs" />
@@ -62,9 +63,11 @@
     <Compile Include="Classes\FuncClassWithOneParam.cs" />
     <Compile Include="Classes\Has1Param.cs" />
     <Compile Include="Classes\Has2Params.cs" />
+    <Compile Include="Classes\IOnlyExistsOnce.cs" />
     <Compile Include="Classes\ISimple.cs" />
     <Compile Include="Classes\IStubObject.cs" />
     <Compile Include="Classes\NeedsArrayOfStubObjects.cs" />
+    <Compile Include="Classes\OnlyExistsOnce.cs" />
     <Compile Include="Classes\Simple.cs" />
     <Compile Include="Classes\StubObject.cs" />
     <Compile Include="Classes\StubObjectBar.cs" />
@@ -79,7 +82,7 @@
     <Compile Include="Classes\Baz1.cs" />
     <Compile Include="Classes\Baz2.cs" />
     <Compile Include="Classes\DefaultConstructor.cs" />
-    <Compile Include="Classes\Foo.cs" />
+    <Compile Include="Classes\Foo1.cs" />
     <Compile Include="Classes\IBar.cs" />
     <Compile Include="Classes\IBaz.cs" />
     <Compile Include="Classes\IFoo.cs" />

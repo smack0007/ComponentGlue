@@ -16,8 +16,8 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsTransient();
 
-			Foo foo1 = container.Resolve<Foo>();
-			Foo foo2 = container.Resolve<Foo>();
+			Foo1 foo1 = container.Resolve<Foo1>();
+			Foo1 foo2 = container.Resolve<Foo1>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -28,24 +28,37 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
 
-			Foo foo1 = container.Resolve<Foo>();
-			Foo foo2 = container.Resolve<Foo>();
+			Foo1 foo1 = container.Resolve<Foo1>();
+			Foo1 foo2 = container.Resolve<Foo1>();
 
 			Assert.AreSame(foo1.Bar, foo2.Bar);
 		}
+
+        [Test]
+        public void Bind_Type_As_Singleton_For_Different_Components_Injects_Different_Instances()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.For<Foo1>().Bind<IBar>().To<Bar1>().AsSingleton();
+            container.For<Foo2>().Bind<IBar>().To<Bar1>().AsSingleton();
+
+            Foo1 foo1 = container.Resolve<Foo1>();
+            Foo2 foo2 = container.Resolve<Foo2>();
+
+            Assert.AreNotSame(foo1.Bar, foo2.Bar);
+        }
 
 		[Test, ExpectedException(typeof(BindingSyntaxException))]
 		public void Bind_Type_Which_Does_Not_Implement_Interface_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Bind<IBar>().To<Foo>();
+			container.Bind<IBar>().To<Foo1>();
 		}
 
 		[Test]
 		public void HasBinding_Returns_True_When_Binding_Exists()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Bind<IFoo>().To<Foo>();
+			container.Bind<IFoo>().To<Foo1>();
 
 			Assert.IsTrue(container.HasBinding<IFoo>());
 		}
@@ -62,7 +75,7 @@ namespace ComponentGlue.Tests
 		public void Rebind_Adds_Binding_When_Binding_Does_Not_Already_Exist()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Rebind<IFoo>().To<Foo>();
+			container.Rebind<IFoo>().To<Foo1>();
 
 			Assert.IsTrue(container.HasBinding<IFoo>());
 		}
@@ -80,9 +93,9 @@ namespace ComponentGlue.Tests
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
-			container.For<Foo>().Bind<IBar>().To<Bar2>();
+			container.For<Foo1>().Bind<IBar>().To<Bar2>();
 
-			Foo foo = container.Resolve<Foo>();
+			Foo1 foo = container.Resolve<Foo1>();
 
 			Assert.IsInstanceOf<Bar2>(foo.Bar);
 		}
@@ -92,10 +105,10 @@ namespace ComponentGlue.Tests
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
-			container.For<Foo>().Bind<IBar>().To<Bar2>().AsTransient();
+			container.For<Foo1>().Bind<IBar>().To<Bar2>().AsTransient();
 
-			Foo foo1 = container.Resolve<Foo>();
-			Foo foo2 = container.Resolve<Foo>();
+			Foo1 foo1 = container.Resolve<Foo1>();
+			Foo1 foo2 = container.Resolve<Foo1>();
 
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
@@ -115,7 +128,7 @@ namespace ComponentGlue.Tests
 			IBar bar = new Bar1();
 			container.Bind<IBar>().ToConstant(bar);
 
-			Foo foo = container.Resolve<Foo>();
+			Foo1 foo = container.Resolve<Foo1>();
 			Assert.AreSame(bar, foo.Bar);
 		}
 
@@ -125,7 +138,7 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 
 			IBar bar = new Bar1();
-			IFoo foo = new Foo(bar);
+			IFoo foo = new Foo1(bar);
 
 			container.Bind<IBar>().ToConstant(foo);
 		}
@@ -155,7 +168,7 @@ namespace ComponentGlue.Tests
 		public void Bind_ToFactoryMethod_Where_Return_Value_Is_Not_Assignable_To_Interface_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.Bind<IBar>().ToFactoryMethod((x) => new Foo(new Bar1()));
+			container.Bind<IBar>().ToFactoryMethod((x) => new Foo1(new Bar1()));
 		}
 
 		[Test]
@@ -208,13 +221,13 @@ namespace ComponentGlue.Tests
 
             Bar1 bar = new Bar1();
 
-            container.Bind<IFoo>().To<Foo>()
+            container.Bind<IFoo>().To<Foo1>()
                 .WithConstructorParameter("bar", bar);
 
             container.Bind<IBar>().To<Bar2>();
 
             var obj = container.Resolve<IFoo>();
-            Assert.AreSame(bar, ((Foo)obj).Bar);
+            Assert.AreSame(bar, ((Foo1)obj).Bar);
         }
 
         [Test]
@@ -224,13 +237,13 @@ namespace ComponentGlue.Tests
 
             Bar1 bar = new Bar1();
 
-            container.Bind<IFoo>().To<Foo>()
+            container.Bind<IFoo>().To<Foo1>()
                 .WithConstructorParameter("bar", bar);
 
             container.For<IFoo>().Bind<IBar>().To<Bar2>();
 
             var obj = container.Resolve<IFoo>();
-            Assert.AreSame(bar, ((Foo)obj).Bar);
+            Assert.AreSame(bar, ((Foo1)obj).Bar);
         }
 	}
 }

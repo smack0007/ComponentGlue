@@ -31,27 +31,25 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void After_AutoBind_IFoo_Can_Be_Resolved()
+		public void After_AutoBind_IOnlyExistsOnce_Can_Be_Resolved()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
 
-			IFoo foo = container.Resolve<IFoo>();
-			Assert.IsInstanceOf(typeof(Foo), foo);
-			Assert.IsInstanceOf(typeof(Bar3), ((Foo)foo).Bar);
-			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)((Foo)foo).Bar).Baz);
+            IOnlyExistsOnce obj = container.Resolve<IOnlyExistsOnce>();
+			Assert.IsInstanceOf(typeof(OnlyExistsOnce), obj);
 		}
 
 		[Test]
-		public void After_AutoBind_With_BindType_Singleton_IFoo_Resolves_As_Singleton()
+        public void After_AutoBind_With_BindType_Singleton_IOnlyExistsOnce_Resolves_As_Singleton()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
 
-			IFoo foo1 = container.Resolve<IFoo>();
-			IFoo foo2 = container.Resolve<IFoo>();
+            IOnlyExistsOnce obj1 = container.Resolve<IOnlyExistsOnce>();
+            IOnlyExistsOnce obj2 = container.Resolve<IOnlyExistsOnce>();
 
-			Assert.AreSame(foo1, foo2);
+			Assert.AreSame(obj1, obj2);
 		}
 
 		[Test]

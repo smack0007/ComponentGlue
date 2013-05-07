@@ -53,14 +53,14 @@ namespace ComponentGlue.Tests
         public void After_Call_To_Resolve_Where_New_Instance_Is_Constructed_Properties_Are_Injected()
         {
             ComponentContainer container = new ComponentContainer();
-            container.Bind<IFoo>().To<Foo>();
+            container.Bind<IFoo>().To<Foo1>();
             container.Bind<IBar>().To<Bar1>();
             container.For<PropertyInject>().Bind<IBar>().To<Bar2>();
 
             var instance = container.Resolve<PropertyInject>();
 
             Assert.NotNull(instance.Foo);
-            Assert.IsInstanceOf<Foo>(instance.Foo);
+            Assert.IsInstanceOf<Foo1>(instance.Foo);
 
             Assert.NotNull(instance.Bar);
             Assert.IsInstanceOf<Bar2>(instance.Bar);

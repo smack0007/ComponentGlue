@@ -10,7 +10,6 @@ namespace ComponentGlue
 	{
 		ComponentContainer parent;
 
-		Dictionary<Type, object> components;
 		ComponentBindingCollection defaultBindings;
 		Dictionary<Type, ComponentBindingCollection> componentBindings;
 
@@ -71,7 +70,6 @@ namespace ComponentGlue
 		{
 			this.parent = parent;
 
-			this.components = new Dictionary<Type, object>();
 			this.defaultBindings = new ComponentBindingCollection();
 			this.componentBindings = new Dictionary<Type, ComponentBindingCollection>();
 
@@ -89,7 +87,6 @@ namespace ComponentGlue
 		/// </summary>
 		public void Dispose()
 		{
-			this.components = null;
 			this.defaultBindings = null;
 			this.componentBindings = null;
 		}
@@ -305,15 +302,17 @@ namespace ComponentGlue
 					break;
 
 				case ComponentBindType.Singleton:
-					if(!this.components.ContainsKey(binding.ComponentType))
+					if(binding.SingletonInstance == null)
 					{
-						component = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
-						this.components[binding.ComponentType] = component;
-						this.ResolveProperties(component);
+                        // The order here is important for resolving circular dependencies.
+                        binding.SingletonInstance = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
+                        this.ResolveProperties(binding.SingletonInstance);
+
+                        component = binding.SingletonInstance;
 					}
 					else
 					{
-						component = this.components[binding.ComponentType];
+                        component = binding.SingletonInstance;
 					}
 					break;
 									

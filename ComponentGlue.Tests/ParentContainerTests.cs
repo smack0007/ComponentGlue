@@ -18,9 +18,9 @@ namespace ComponentGlue.Tests
 			ComponentContainer child = new ComponentContainer(parent);
 			child.Bind<IBar>().To<Bar3>().AsSingleton();
 
-			Foo foo = child.Resolve<Foo>();
+			Foo1 foo = child.Resolve<Foo1>();
 
-			Assert.IsInstanceOf(typeof(Foo), foo);
+			Assert.IsInstanceOf(typeof(Foo1), foo);
 			Assert.IsInstanceOf(typeof(Bar3), foo.Bar);
 			Assert.IsInstanceOf(typeof(Baz1), ((Bar3)foo.Bar).Baz);
 		}
@@ -35,9 +35,9 @@ namespace ComponentGlue.Tests
 			child.Bind<IBar>().To<Bar3>().AsSingleton();
 			child.Bind<IBaz>().To<Baz2>().AsSingleton();
 
-			Foo foo = child.Resolve<Foo>();
+			Foo1 foo = child.Resolve<Foo1>();
 
-			Assert.IsInstanceOf(typeof(Foo), foo);
+			Assert.IsInstanceOf(typeof(Foo1), foo);
 			Assert.IsInstanceOf(typeof(Bar3), foo.Bar);
 			Assert.IsInstanceOf(typeof(Baz2), ((Bar3)foo.Bar).Baz);
 		}
