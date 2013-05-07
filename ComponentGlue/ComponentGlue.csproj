@@ -45,12 +45,15 @@
     <Compile Include="BindingSyntaxException.cs" />
     <Compile Include="ComponentBinding.cs" />
     <Compile Include="ComponentBindingCollection.cs" />
+    <Compile Include="IBindingSyntaxAsWithMultiple.cs" />
+    <Compile Include="IBindingSyntaxAsWithSingle.cs" />
     <Compile Include="IBindingSyntaxFor.cs" />
     <Compile Include="IBindingSyntaxRoot.cs" />
     <Compile Include="ComponentBindType.cs" />
     <Compile Include="ComponentResolutionException.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="IBindingSyntaxAdd.cs" />
     <Compile Include="IComponentContainer.cs" />
     <Compile Include="IComponentResolver.cs" />
     <Compile Include="IDefaultComponentAttribute.cs" />

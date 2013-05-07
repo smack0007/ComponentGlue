@@ -7,7 +7,7 @@ namespace ComponentGlue
 	/// </summary>
 	public enum ComponentBindType
 	{
-		/// <summary>
+        /// <summary>
 		/// A new component will always be constructed.
 		/// </summary>
 		Transient = 0,
@@ -25,6 +25,11 @@ namespace ComponentGlue
 		/// <summary>
 		/// The component instance is built by a factory method.
 		/// </summary>
-		FactoryMethod
+		FactoryMethod,
+
+        /// <summary>
+        /// The binding consists of multiple components.
+        /// </summary>
+        Multiple
 	}
 }

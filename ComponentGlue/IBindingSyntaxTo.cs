@@ -9,13 +9,13 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="componentType"></param>
 		/// <returns></returns>
-		IBindingSyntaxAsWith To(Type componentType);
+		IBindingSyntaxAsWithSingle To(Type componentType);
 				
 		/// <summary>
 		/// Sets the component type to the interface type.
 		/// </summary>
 		/// <returns></returns>
-		IBindingSyntaxAsWith ToSelf();
+		IBindingSyntaxAsWithSingle ToSelf();
 
 		/// <summary>
 		/// Sets the component as an already existing instance.
@@ -28,5 +28,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="component"></param>
 		void ToFactoryMethod<T>(Func<IComponentResolver, T> factoryMethod);
+
+        IBindingSyntaxAdd ToMultiple();
 	}
 }

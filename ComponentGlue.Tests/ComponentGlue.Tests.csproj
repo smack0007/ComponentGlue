@@ -67,6 +67,8 @@
     <Compile Include="Classes\NeedsArrayOfStubObjects.cs" />
     <Compile Include="Classes\Simple.cs" />
     <Compile Include="Classes\StubObject.cs" />
+    <Compile Include="Classes\StubObjectBar.cs" />
+    <Compile Include="Classes\StubObjectFoo.cs" />
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="MultiBindTests.cs" />
     <Compile Include="ParentContainerTests.cs" />

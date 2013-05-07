@@ -2,23 +2,23 @@
 
 namespace ComponentGlue
 {
-	public interface IBindingSyntaxAsWith
+	public interface IBindingSyntaxAsWith<TReturn>
 	{
 		/// <summary>
 		/// Sets the bind type.
 		/// </summary>
 		/// <param name="bindType"></param>
-        IBindingSyntaxAsWith As(ComponentBindType bindType);
+        TReturn As(ComponentBindType bindType);
 
 		/// <summary>
 		/// Marks a binding as Transient. A new component will always be constructed.
 		/// </summary>
-        IBindingSyntaxAsWith AsTransient();
+        TReturn AsTransient();
 
 		/// <summary>
 		/// Marks a binding as Singleton. Component will be pulled from cache if available.
 		/// </summary>
-        IBindingSyntaxAsWith AsSingleton();
+        TReturn AsSingleton();
 
         /// <summary>
         /// Adds a parameter to be used for constructing the component.
@@ -26,6 +26,6 @@ namespace ComponentGlue
         /// <param name="paramName"></param>
         /// <param name="paramValue"></param>
         /// <returns></returns>
-        IBindingSyntaxAsWith WithConstructorParameter(string paramName, object paramValue);
+        TReturn WithConstructorParameter(string paramName, object paramValue);
 	}
 }

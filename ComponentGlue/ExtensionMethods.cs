@@ -30,7 +30,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <typeparam name="TConcreteType"></typeparam>
 		/// <returns></returns>
-		public static IBindingSyntaxAsWith To<TConcreteType>(this IBindingSyntaxTo container)
+        public static IBindingSyntaxAsWithSingle To<TConcreteType>(this IBindingSyntaxTo container)
 		{
 			return container.To(typeof(TConcreteType));
 		}
@@ -65,5 +65,10 @@ namespace ComponentGlue
 		{
 			return container.Rebind(typeof(TComponentType));
 		}
+
+        public static IBindingSyntaxAsWithMultiple Add<TComponentType>(this IBindingSyntaxAdd container)
+        {
+            return container.Add(typeof(TComponentType));
+        }
 	}
 }

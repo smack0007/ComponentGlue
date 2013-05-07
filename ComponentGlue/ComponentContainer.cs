@@ -198,7 +198,7 @@ namespace ComponentGlue
                 {
                     try
                     {
-                        parametersToInject[i] = this.FetchComponentForInjection(type, constructorParameters[i].ParameterType);
+                        parametersToInject[i] = this.ResolveComponentForInjection(type, constructorParameters[i].ParameterType);
                     }
                     catch (Exception ex)
                     {
@@ -265,7 +265,7 @@ namespace ComponentGlue
 			// Default bindings
 			if (this.defaultBindings.HasBinding(type))
 			{
-				component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(type));
+				component = this.ResolveComponentByBinding(this.defaultBindings.GetBinding(type));
 			}
 			else
 			{
@@ -293,7 +293,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="binding"></param>
 		/// <returns></returns>
-		private object FetchComponentByBinding(ComponentBinding binding)
+		private object ResolveComponentByBinding(ComponentBinding binding)
 		{
 			object component = null;
 
@@ -324,6 +324,18 @@ namespace ComponentGlue
 				case ComponentBindType.FactoryMethod:
 					component = ((Func<IComponentContainer, object>)binding.Data)(this);
 					break;
+
+                case ComponentBindType.Multiple:
+                    var bindings = ((List<ComponentBinding>)binding.Data);
+                    var components = Array.CreateInstance(binding.ComponentType.GetElementType(), bindings.Count);
+
+                    for (int i = 0; i < bindings.Count; i++)
+                    {
+                        components.SetValue(this.ResolveComponentByBinding(bindings[i]), i);
+                    }
+
+                    component = components;
+                    break;
 			}
 			
 			return component;
@@ -335,21 +347,21 @@ namespace ComponentGlue
 		/// <param name="constructedType">The type which is currently being constructed.</param>
 		/// <param name="componentType">The requested component type.</param>
 		/// <returns></returns>
-		private object FetchComponentForInjection(Type constructedType, Type componentType)
+		private object ResolveComponentForInjection(Type constructedType, Type componentType)
 		{
 			object component = null;
 
 			// Specific bindings
 			if (this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(componentType))
-				component = this.FetchComponentByBinding(this.componentBindings[constructedType].GetBinding(componentType));
+				component = this.ResolveComponentByBinding(this.componentBindings[constructedType].GetBinding(componentType));
 			
 			// Default bindings
 			if (component == null && this.defaultBindings.HasBinding(componentType))
-				component = this.FetchComponentByBinding(this.defaultBindings.GetBinding(componentType));
+				component = this.ResolveComponentByBinding(this.defaultBindings.GetBinding(componentType));
 
 			// Proxy to parent container if available
 			if (component == null && this.parent != null)
-				component = this.parent.FetchComponentForInjection(constructedType, componentType);
+				component = this.parent.ResolveComponentForInjection(constructedType, componentType);
 
 			// Component not found
 			if (component == null)
@@ -378,7 +390,7 @@ namespace ComponentGlue
 						if (!property.CanWrite)
 							throw new ComponentResolutionException(string.Format("Property \"{0}\" of type \"{1}\" is marked as Inject but not writable.", property.Name, type));
 
-						property.SetValue(instance, FetchComponentForInjection(type, property.PropertyType), null);
+						property.SetValue(instance, ResolveComponentForInjection(type, property.PropertyType), null);
 					}
 				}
 			}
