@@ -9,7 +9,7 @@ namespace ComponentGlue
 	{
 		ComponentContainer parent;
 
-		ComponentBindingCollection defaultBindings;
+		ComponentBindingCollection globalBindings;
 		Dictionary<Type, ComponentBindingCollection> componentBindings;
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace ComponentGlue
 		{
 			this.parent = parent;
 
-			this.defaultBindings = new ComponentBindingCollection();
+			this.globalBindings = new ComponentBindingCollection();
 			this.componentBindings = new Dictionary<Type, ComponentBindingCollection>();
 
 			this.constructStack = new Stack<Type>();
@@ -86,7 +86,7 @@ namespace ComponentGlue
 		/// </summary>
 		public void Dispose()
 		{
-			this.defaultBindings = null;
+			this.globalBindings = null;
 			this.componentBindings = null;
 		}
 
@@ -259,9 +259,9 @@ namespace ComponentGlue
 			object component = null;
             			
 			// Default bindings
-			if (this.defaultBindings.HasBinding(type))
+			if (this.globalBindings.HasBinding(type))
 			{
-				component = this.defaultBindings.GetBinding(type).Resolve(this);
+				component = this.globalBindings.GetBinding(type).Resolve(this);
 			}
 			else
 			{
@@ -300,8 +300,8 @@ namespace ComponentGlue
 				component = this.componentBindings[constructedType].GetBinding(componentType).Resolve(this);
 			
 			// Default bindings
-			if (component == null && this.defaultBindings.HasBinding(componentType))
-				component = this.defaultBindings.GetBinding(componentType).Resolve(this);
+			if (component == null && this.globalBindings.HasBinding(componentType))
+				component = this.globalBindings.GetBinding(componentType).Resolve(this);
 
 			// Proxy to parent container if available
 			if (component == null && this.parent != null)
@@ -350,17 +350,17 @@ namespace ComponentGlue
 
 		public IBindingSyntaxTo Bind(Type type)
 		{
-			return this.defaultBindings.Bind(type);
+			return this.globalBindings.Bind(type);
 		}
 						
 		public bool HasBinding(Type type)
 		{
-			return this.defaultBindings.HasBinding(type);
+			return this.globalBindings.HasBinding(type);
 		}
 
 		public IBindingSyntaxTo Rebind(Type type)
 		{
-			return this.defaultBindings.Rebind(type);
+			return this.globalBindings.Rebind(type);
 		}
 
 		/// <summary>

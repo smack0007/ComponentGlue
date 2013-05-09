@@ -88,7 +88,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void Specific_Binding_Overrides_Default_Binding()
+		public void Specific_Binding_Overrides_Global_Binding()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>();
@@ -100,7 +100,7 @@ namespace ComponentGlue.Tests
 		}
 
 		[Test]
-		public void Specific_Binding_With_Differnt_Type_Overrides_Default_Binding()
+		public void Specific_Binding_With_Differnt_Type_Overrides_Global_Binding()
 		{
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().To<Bar1>().AsSingleton();
@@ -202,7 +202,7 @@ namespace ComponentGlue.Tests
         }
 
         [Test]
-        public void WithConstructorParameter_Overrides_Default_Bindings()
+        public void WithConstructorParameter_Overrides_Global_Bindings()
         {
             ComponentContainer container = new ComponentContainer();
 
