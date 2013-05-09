@@ -42,21 +42,21 @@ namespace ComponentGlue
 				throw new BindingSyntaxException(string.Format("Type {0} is not assignable to type {1}.", concrete, this.ComponentType));
 		}
 
-        private IBindingSyntaxAs ConstructSimpleStrategy(Type concreteType)
+        private IBindingSyntaxAs<IBindingSyntaxWith> ConstructSimpleStrategy(Type concreteType)
         {
             this.EnsureComponentTypeIsAssignableFromConcreteType(concreteType);
 
             this.strategy = new SimpleComponentBindingStrategy(this, concreteType);
 
-            return (IBindingSyntaxAs)this.strategy;
+            return (IBindingSyntaxAs<IBindingSyntaxWith>)this.strategy;
         }
 
-        public IBindingSyntaxAs To(Type concreteType)
+        public IBindingSyntaxAs<IBindingSyntaxWith> To(Type concreteType)
 		{
             return this.ConstructSimpleStrategy(concreteType);
 		}
 
-        public IBindingSyntaxAs ToSelf()
+        public IBindingSyntaxAs<IBindingSyntaxWith> ToSelf()
 		{
             return this.ConstructSimpleStrategy(this.ComponentType);
 		}

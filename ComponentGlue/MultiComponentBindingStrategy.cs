@@ -44,19 +44,19 @@ namespace ComponentGlue
 
         public IBindingSyntaxAddOrWith As(ComponentBindType bindType)
         {
-            ((IBindingSyntaxAs)this.GetCurrentStrategy()).As(bindType);
+            ((IBindingSyntaxAs<IBindingSyntaxWith>)this.GetCurrentStrategy()).As(bindType);
             return this;
         }
 
         public IBindingSyntaxAddOrWith AsTransient()
         {
-            ((IBindingSyntaxAs)this.GetCurrentStrategy()).AsTransient();
+            ((IBindingSyntaxAs<IBindingSyntaxWith>)this.GetCurrentStrategy()).AsTransient();
             return this;
         }
 
         public IBindingSyntaxAddOrWith AsSingleton()
         {
-            ((IBindingSyntaxAs)this.GetCurrentStrategy()).AsSingleton();
+            ((IBindingSyntaxAs<IBindingSyntaxWith>)this.GetCurrentStrategy()).AsSingleton();
             return this;
         }
 

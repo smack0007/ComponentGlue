@@ -5,7 +5,5 @@ using System.Text;
 
 namespace ComponentGlue
 {
-    public interface IBindingSyntaxAddOrAs : IBindingSyntaxAdd, IBindingSyntaxAs<IBindingSyntaxAddOrWith>
-    {
-    }
+    
 }

@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BindingSyntax.cs" />
     <Compile Include="BindingSyntaxException.cs" />
     <Compile Include="ComponentBinding.cs" />
     <Compile Include="ComponentBindingCollection.cs" />
@@ -49,15 +50,11 @@
     <Compile Include="FactoryMethodComponentBindingStrategy.cs" />
     <Compile Include="IBindingSyntaxAddOrAs.cs" />
     <Compile Include="IBindingSyntaxAddOrWith.cs" />
-    <Compile Include="IBindingSyntaxAs.cs" />
-    <Compile Include="IBindingSyntaxFor.cs" />
-    <Compile Include="IBindingSyntaxRoot.cs" />
     <Compile Include="ComponentBindType.cs" />
     <Compile Include="ComponentResolutionException.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IBindingSyntaxAdd.cs" />
-    <Compile Include="IBindingSyntaxWith.cs" />
     <Compile Include="IComponentBindingStrategy.cs" />
     <Compile Include="IComponentContainer.cs" />
     <Compile Include="IComponentResolver.cs" />
@@ -66,8 +63,6 @@
     <Compile Include="ComponentContainer.cs" />
     <Compile Include="MultiComponentBindingStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IBindingSyntaxBind.cs" />
-    <Compile Include="IBindingSyntaxTo.cs" />
     <Compile Include="SimpleComponentBindingStrategy.cs" />
   </ItemGroup>
   <ItemGroup />

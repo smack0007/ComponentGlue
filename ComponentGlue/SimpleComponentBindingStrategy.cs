@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ComponentGlue
 {
-    internal class SimpleComponentBindingStrategy : IComponentBindingStrategy, IBindingSyntaxAs, IBindingSyntaxWith
+    internal class SimpleComponentBindingStrategy : IComponentBindingStrategy, IBindingSyntaxAs<IBindingSyntaxWith>, IBindingSyntaxWith
     {
         ComponentBinding binding;
         Type type;
