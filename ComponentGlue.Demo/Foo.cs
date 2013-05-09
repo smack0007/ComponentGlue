@@ -3,24 +3,17 @@ using ComponentGlue;
 
 namespace ComponentGlue.Demo
 {
-	public class Foo : IFoo
+	public class Foo
 	{
 		public IBar Bar
 		{
 			get;
 			private set;
 		}
-
-        public string Name
-        {
-            get;
-            private set;
-        }
-
-		public Foo(IBar bar, string name)
+                
+		public Foo(IBar bar)
 		{
 			this.Bar = bar;
-            this.Name = name;
 		}
 	}
 }
