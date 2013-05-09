@@ -3,10 +3,19 @@ Component Glue
 
 Component Glue is a dependency injection / IoC container. Component Glue has a fluent syntax and aims to be simple to use.
 
+Key Features
+------------
+
+* **Fluent Syntax** - Use a fluent syntax to glue together your components.
+* **Auto Binding** - The cotainer can look through an assembly an automatically wire up interfaces which only have one implementing component.
+* **Auto Factories** - Just request a Func<T> in a component and the container will inject a factory that will resolve the binding.
+* **Multi Binding** - Components can receive arrays of dependencies using ToMultiple.
+
+
 Getting Started
 ---------------
 
-* The following code snippets are taken from the provided demo program. *
+_The following code snippets are taken from the provided demo program._
 
 The first thing you'll need to do is instaniate an instance of the container and set your first binding.
 
