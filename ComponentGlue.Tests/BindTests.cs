@@ -3,7 +3,6 @@ using System.Reflection;
 using NUnit.Framework;
 using ComponentGlue;
 using ComponentGlue.Tests.Classes;
-using ComponentGlue.BindingSyntax;
 
 namespace ComponentGlue.Tests
 {
@@ -113,13 +112,6 @@ namespace ComponentGlue.Tests
 			Assert.AreNotSame(foo1.Bar, foo2.Bar);
 		}
 
-		[Test, ExpectedException(typeof(BindingSyntaxException))]
-		public void As_BindType_Constant_Throws_Exception()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.Bind<IBar>().To<Bar1>().As(ComponentBindType.Constant);
-		}
-
 		[Test]
 		public void Bind_To_Constant_Does_Not_Construct_New_Instance()
 		{
@@ -149,13 +141,6 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToConstant(null);
 		}
-
-        [Test, ExpectedException(typeof(BindingSyntaxException))]
-        public void As_BindType_FactoryMethod_Throws_Exception()
-        {
-            ComponentContainer container = new ComponentContainer();
-            container.Bind<IBar>().To<Bar1>().As(ComponentBindType.FactoryMethod);
-        }
 
 		[Test, ExpectedException(typeof(ArgumentNullException))]
 		public void Bind_ToFactoryMethod_Where_Method_Is_Null_Throws_Exception()
@@ -194,6 +179,7 @@ namespace ComponentGlue.Tests
             
             container.Bind<Has1Param>()
                 .ToSelf()
+                .AsTransient()
                 .WithConstructorParameter("name", "Steve");
 
             var obj = container.Resolve<Has1Param>();
@@ -206,6 +192,7 @@ namespace ComponentGlue.Tests
             ComponentContainer container = new ComponentContainer();
             
             container.Bind<Has2Params>().ToSelf()
+                .AsTransient()
                 .WithConstructorParameter("name", "Steve")
                 .WithConstructorParameter("age", 12);
 
@@ -222,6 +209,7 @@ namespace ComponentGlue.Tests
             Bar1 bar = new Bar1();
 
             container.Bind<IFoo>().To<Foo1>()
+                .AsTransient()
                 .WithConstructorParameter("bar", bar);
 
             container.Bind<IBar>().To<Bar2>();
@@ -238,6 +226,7 @@ namespace ComponentGlue.Tests
             Bar1 bar = new Bar1();
 
             container.Bind<IFoo>().To<Foo1>()
+                .AsTransient()
                 .WithConstructorParameter("bar", bar);
 
             container.For<IFoo>().Bind<IBar>().To<Bar2>();

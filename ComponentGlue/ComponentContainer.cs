@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ComponentGlue.BindingSyntax;
 
 namespace ComponentGlue
 {
@@ -180,7 +179,7 @@ namespace ComponentGlue
         /// <param name="constructor"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        private object[] BuildConstructorParameters(Type type, ConstructorInfo constructor, Dictionary<string, object> parameters)
+        private object[] BuildConstructorParameters(Type type, ConstructorInfo constructor, IDictionary<string, object> parameters)
         {
             ParameterInfo[] constructorParameters = constructor.GetParameters();
             object[] parametersToInject = new object[constructorParameters.Length];
@@ -212,7 +211,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		private object ConstructComponent(Type type, Dictionary<string, object> parameters)
+		public object Construct(Type type, IDictionary<string, object> parameters)
 		{
 			if (type.IsInterface)
 				throw new ComponentResolutionException(string.Format("{0} is an interface and cannot be constructed.", type));
@@ -262,7 +261,7 @@ namespace ComponentGlue
 			// Default bindings
 			if (this.defaultBindings.HasBinding(type))
 			{
-				component = this.ResolveComponentByBinding(this.defaultBindings.GetBinding(type));
+				component = this.defaultBindings.GetBinding(type).Resolve(this);
 			}
 			else
 			{
@@ -274,7 +273,7 @@ namespace ComponentGlue
                 }
                 else
                 {
-                    component = this.ConstructComponent(type, null);
+                    component = this.Construct(type, null);
 					this.ResolveProperties(component);
                 }
 			}
@@ -284,62 +283,8 @@ namespace ComponentGlue
 
 			return component;
 		}
-				
-		/// <summary>
-		/// Gets a component instance based on a binding.
-		/// </summary>
-		/// <param name="binding"></param>
-		/// <returns></returns>
-		private object ResolveComponentByBinding(ComponentBinding binding)
-		{
-			object component = null;
-
-			switch (binding.BindType)
-			{
-				case ComponentBindType.Transient:
-					component = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
-					this.ResolveProperties(component);
-					break;
-
-				case ComponentBindType.Singleton:
-					if(binding.SingletonInstance == null)
-					{
-                        // The order here is important for resolving circular dependencies.
-                        binding.SingletonInstance = this.ConstructComponent(binding.ConcreteType, binding.ConstructorParameters);
-                        this.ResolveProperties(binding.SingletonInstance);
-
-                        component = binding.SingletonInstance;
-					}
-					else
-					{
-                        component = binding.SingletonInstance;
-					}
-					break;
-									
-				case ComponentBindType.Constant:
-					component = binding.Data;
-					break;
-
-				case ComponentBindType.FactoryMethod:
-					component = ((Func<IComponentContainer, object>)binding.Data)(this);
-					break;
-
-                case ComponentBindType.Multiple:
-                    var bindings = ((List<ComponentBinding>)binding.Data);
-                    var components = Array.CreateInstance(binding.ComponentType.GetElementType(), bindings.Count);
-
-                    for (int i = 0; i < bindings.Count; i++)
-                    {
-                        components.SetValue(this.ResolveComponentByBinding(bindings[i]), i);
-                    }
-
-                    component = components;
-                    break;
-			}
 			
-			return component;
-		}
-
+		
 		/// <summary>
 		/// Gets a component instance for injection.
 		/// </summary>
@@ -352,11 +297,11 @@ namespace ComponentGlue
 
 			// Specific bindings
 			if (this.componentBindings.ContainsKey(constructedType) && this.componentBindings[constructedType].HasBinding(componentType))
-				component = this.ResolveComponentByBinding(this.componentBindings[constructedType].GetBinding(componentType));
+				component = this.componentBindings[constructedType].GetBinding(componentType).Resolve(this);
 			
 			// Default bindings
 			if (component == null && this.defaultBindings.HasBinding(componentType))
-				component = this.ResolveComponentByBinding(this.defaultBindings.GetBinding(componentType));
+				component = this.defaultBindings.GetBinding(componentType).Resolve(this);
 
 			// Proxy to parent container if available
 			if (component == null && this.parent != null)
@@ -364,7 +309,7 @@ namespace ComponentGlue
 
 			// Component not found
 			if (component == null)
-				component = this.ConstructComponent(componentType, null);
+				component = this.Construct(componentType, null);
 
 			return component;
 		}

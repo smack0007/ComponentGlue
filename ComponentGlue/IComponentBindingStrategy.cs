@@ -5,7 +5,8 @@ using System.Text;
 
 namespace ComponentGlue
 {
-    public interface IBindingSyntaxAsWithSingle : IBindingSyntaxAsWith<IBindingSyntaxAsWithSingle>
+    internal interface IComponentBindingStrategy
     {
+        object Resolve(IComponentContainer container);
     }
 }

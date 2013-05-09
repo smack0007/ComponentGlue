@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ComponentGlue.BindingSyntax
+namespace ComponentGlue
 {
 	/// <summary>
 	/// Exception thrown when an error occurs while using binding syntax.

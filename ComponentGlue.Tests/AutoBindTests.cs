@@ -7,7 +7,7 @@ using ComponentGlue.Tests.Classes;
 
 namespace ComponentGlue.Tests
 {
-	[TestFixture, Description("Auto Bind")]
+	[TestFixture]
 	public class AutoBindTests
 	{
 		[Test]

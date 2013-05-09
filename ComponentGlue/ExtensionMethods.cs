@@ -1,5 +1,4 @@
 ﻿using System;
-using ComponentGlue.BindingSyntax;
 
 namespace ComponentGlue
 {
@@ -30,7 +29,7 @@ namespace ComponentGlue
 		/// </summary>
 		/// <typeparam name="TConcreteType"></typeparam>
 		/// <returns></returns>
-        public static IBindingSyntaxAsWithSingle To<TConcreteType>(this IBindingSyntaxTo container)
+        public static IBindingSyntaxAs To<TConcreteType>(this IBindingSyntaxTo container)
 		{
 			return container.To(typeof(TConcreteType));
 		}
@@ -66,7 +65,7 @@ namespace ComponentGlue
 			return container.Rebind(typeof(TComponentType));
 		}
 
-        public static IBindingSyntaxAsWithMultiple Add<TComponentType>(this IBindingSyntaxAdd container)
+        public static IBindingSyntaxAs<IBindingSyntaxAddOrWith> Add<TComponentType>(this IBindingSyntaxAdd container)
         {
             return container.Add(typeof(TComponentType));
         }

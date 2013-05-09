@@ -15,21 +15,6 @@ namespace ComponentGlue
 		/// <summary>
 		/// The component may be shared with other components.
 		/// </summary>
-		Singleton,
-
-		/// <summary>
-		/// The component instance is specified.
-		/// </summary>
-		Constant,
-
-		/// <summary>
-		/// The component instance is built by a factory method.
-		/// </summary>
-		FactoryMethod,
-
-        /// <summary>
-        /// The binding consists of multiple components.
-        /// </summary>
-        Multiple
+		Singleton
 	}
 }

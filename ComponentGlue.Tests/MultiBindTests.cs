@@ -60,8 +60,8 @@ namespace ComponentGlue.Tests
         {
             ComponentContainer container = new ComponentContainer();
             container.Bind<IStubObject[]>().ToMultiple()
-                .Add<StubObjectFoo>().WithConstructorParameter("id", "Foo")
-                .Add<StubObjectBar>().WithConstructorParameter("id", "Bar");
+                .Add<StubObjectFoo>().AsTransient().WithConstructorParameter("id", "Foo")
+                .Add<StubObjectBar>().AsTransient().WithConstructorParameter("id", "Bar");
 
             var obj = container.Resolve<NeedsArrayOfStubObjects>();
             Assert.AreEqual(2, obj.Stubs.Length);

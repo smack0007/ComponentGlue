@@ -9,13 +9,13 @@ namespace ComponentGlue
 		/// </summary>
 		/// <param name="componentType"></param>
 		/// <returns></returns>
-		IBindingSyntaxAsWithSingle To(Type componentType);
+		IBindingSyntaxAs To(Type componentType);
 				
 		/// <summary>
 		/// Sets the component type to the interface type.
 		/// </summary>
 		/// <returns></returns>
-		IBindingSyntaxAsWithSingle ToSelf();
+		IBindingSyntaxAs ToSelf();
 
 		/// <summary>
 		/// Sets the component as an already existing instance.

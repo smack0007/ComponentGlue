@@ -1,5 +1,5 @@
 ﻿using System;
-using ComponentGlue.BindingSyntax;
+using System.Collections.Generic;
 
 namespace ComponentGlue
 {
@@ -8,5 +8,6 @@ namespace ComponentGlue
 	/// </summary>
 	public interface IComponentContainer : IComponentResolver, IBindingSyntaxRoot
 	{
+        object Construct(Type type, IDictionary<string, object> parameters);
 	}
 }
