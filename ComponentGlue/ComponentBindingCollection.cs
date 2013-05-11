@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace ComponentGlue
 {
-	internal class ComponentBindingCollection : IBindingSyntaxBind
+	internal class ComponentBindingCollection : IBindingSyntaxBind, IEnumerable<ComponentBinding>
 	{
 		Dictionary<Type, ComponentBinding> bindings;
 
@@ -47,5 +47,15 @@ namespace ComponentGlue
 
 			return this.bindings[type];
 		}
-	}
+
+        public IEnumerator<ComponentBinding> GetEnumerator()
+        {
+            return this.bindings.Values.GetEnumerator();
+        }
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+    }
 }

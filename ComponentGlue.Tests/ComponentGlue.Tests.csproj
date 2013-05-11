@@ -49,6 +49,7 @@
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="AutoFactoryTests.cs" />
     <Compile Include="BindTests.cs" />
+    <Compile Include="Classes\DisposableObject.cs" />
     <Compile Include="Classes\Foo2.cs" />
     <Compile Include="Classes\FuncClass.cs" />
     <Compile Include="Classes\CircularDependency1.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Classes\StubObjectBar.cs" />
     <Compile Include="Classes\StubObjectFoo.cs" />
     <Compile Include="ConfigurationTests.cs" />
+    <Compile Include="LifecycleManagementTests.cs" />
     <Compile Include="MultiBindTests.cs" />
     <Compile Include="ParentContainerTests.cs" />
     <Compile Include="Classes\AbstractClass.cs" />

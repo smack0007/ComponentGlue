@@ -86,7 +86,21 @@ namespace ComponentGlue
 		/// </summary>
 		public void Dispose()
 		{
+            foreach (ComponentBinding binding in this.globalBindings)
+            {
+                binding.Dispose();
+            }
+
 			this.globalBindings = null;
+
+            foreach (var specificComponentBindings in this.componentBindings.Values)
+            {
+                foreach (ComponentBinding binding in specificComponentBindings)
+                {
+                    binding.Dispose();
+                }
+            }
+
 			this.componentBindings = null;
 		}
 

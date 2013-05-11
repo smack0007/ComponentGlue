@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ComponentGlue
 {
-    internal class ComponentBinding : IBindingSyntaxTo
+    internal class ComponentBinding : IBindingSyntaxTo, IDisposable
 	{
         IComponentBindingStrategy strategy;
         
@@ -24,6 +24,14 @@ namespace ComponentGlue
 		{
 			this.ComponentType = componentType;
 		}
+                
+        public void Dispose()
+        {
+            if (this.strategy != null && this.strategy is IDisposable)
+            {
+                ((IDisposable)this.strategy).Dispose();
+            }
+        }
 
         public object Resolve(IComponentContainer container)
         {
@@ -87,6 +95,6 @@ namespace ComponentGlue
             this.strategy = new MultiComponentBindingStrategy(this);
 
             return (IBindingSyntaxAdd)this.strategy;
-        }                        
+        }
     }
 }

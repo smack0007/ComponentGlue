@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ComponentGlue
 {
-    internal class SimpleComponentBindingStrategy : IComponentBindingStrategy, IBindingSyntaxAs<IBindingSyntaxWith>, IBindingSyntaxWith
+    internal class SimpleComponentBindingStrategy : IComponentBindingStrategy, IBindingSyntaxAs<IBindingSyntaxWith>, IBindingSyntaxWith, IDisposable
     {
         ComponentBinding binding;
         Type type;
@@ -23,6 +23,14 @@ namespace ComponentGlue
 
             this.binding = binding;
             this.type = type;
+        }
+
+        public void Dispose()
+        {
+            if (this.instance != null && this.instance is IDisposable)
+            {
+                ((IDisposable)this.instance).Dispose();
+            }
         }
 
         public object Resolve(IComponentContainer container)
