@@ -60,14 +60,14 @@ namespace ComponentGlue.Tests
         {
             ComponentContainer container = new ComponentContainer();
             container.Bind<IStubObject[]>().ToMultiple()
-                .Add<StubObjectFoo>().AsTransient().WithConstructorParameter("id", "Foo")
-                .Add<StubObjectBar>().AsTransient().WithConstructorParameter("id", "Bar");
+                .Add<StubObjectFooConstructor>().AsTransient().WithConstructorParameter("id", "Foo")
+                .Add<StubObjectBarConstructor>().AsTransient().WithConstructorParameter("id", "Bar");
 
             var obj = container.Resolve<NeedsArrayOfStubObjects>();
             Assert.AreEqual(2, obj.Stubs.Length);
 
-            Assert.IsInstanceOf<StubObjectFoo>(obj.Stubs[0]);
-            Assert.IsInstanceOf<StubObjectBar>(obj.Stubs[1]);
+            Assert.IsInstanceOf<StubObjectFooConstructor>(obj.Stubs[0]);
+            Assert.IsInstanceOf<StubObjectBarConstructor>(obj.Stubs[1]);
         }
 
         [Test]
@@ -75,20 +75,20 @@ namespace ComponentGlue.Tests
         {
             ComponentContainer container = new ComponentContainer();
             container.Bind<IStubObject[]>().ToMultiple()
-                .Add<StubObjectFoo>().AsSingleton().WithConstructorParameter("id", "Foo")
-                .Add<StubObjectBar>().AsTransient().WithConstructorParameter("id", "Bar");
+                .Add<StubObjectFooConstructor>().AsSingleton().WithConstructorParameter("id", "Foo")
+                .Add<StubObjectBarConstructor>().AsTransient().WithConstructorParameter("id", "Bar");
 
             var obj1 = container.Resolve<NeedsArrayOfStubObjects>();
             Assert.AreEqual(2, obj1.Stubs.Length);
 
-            Assert.IsInstanceOf<StubObjectFoo>(obj1.Stubs[0]);
-            Assert.IsInstanceOf<StubObjectBar>(obj1.Stubs[1]);
+            Assert.IsInstanceOf<StubObjectFooConstructor>(obj1.Stubs[0]);
+            Assert.IsInstanceOf<StubObjectBarConstructor>(obj1.Stubs[1]);
 
             var obj2 = container.Resolve<NeedsArrayOfStubObjects>();
             Assert.AreEqual(2, obj2.Stubs.Length);
 
-            Assert.IsInstanceOf<StubObjectFoo>(obj2.Stubs[0]);
-            Assert.IsInstanceOf<StubObjectBar>(obj2.Stubs[1]);
+            Assert.IsInstanceOf<StubObjectFooConstructor>(obj2.Stubs[0]);
+            Assert.IsInstanceOf<StubObjectBarConstructor>(obj2.Stubs[1]);
 
             Assert.AreSame(obj1.Stubs[0], obj2.Stubs[0]);
             Assert.AreNotSame(obj1.Stubs[1], obj2.Stubs[1]);

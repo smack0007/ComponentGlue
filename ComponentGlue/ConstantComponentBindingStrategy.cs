@@ -14,7 +14,7 @@ namespace ComponentGlue
             this.value = value;
         }
 
-        public object Resolve(IComponentContainer container)
+        public object Resolve(ComponentContainer container)
         {
             return this.value;
         }

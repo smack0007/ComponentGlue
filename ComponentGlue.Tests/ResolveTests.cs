@@ -66,21 +66,21 @@ namespace ComponentGlue.Tests
             Assert.IsInstanceOf<Bar2>(instance.Bar);
         }
 
-        //[Test]
-        //public void Circular_Dependency_Can_Be_Resolved_Using_Property_Injection_And_Singletons()
-        //{
-        //    ComponentContainer container = new ComponentContainer();
-        //    container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton();
-        //    container.Bind<CircularDependencyProperty2>().ToSelf().AsSingleton();
+        [Test]
+        public void Circular_Dependency_Can_Be_Resolved_Using_Property_Injection_And_Singletons()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton();
+            container.Bind<CircularDependencyProperty2>().ToSelf().AsSingleton();
 
-        //    var dependency1 = container.Resolve<CircularDependencyProperty1>();
-        //    var dependency2 = container.Resolve<CircularDependencyProperty2>();
+            var dependency1 = container.Resolve<CircularDependencyProperty1>();
+            var dependency2 = container.Resolve<CircularDependencyProperty2>();
 
-        //    Assert.NotNull(dependency1.Dependency);
-        //    Assert.IsInstanceOf<CircularDependencyProperty2>(dependency1.Dependency);
+            Assert.NotNull(dependency1.Dependency);
+            Assert.IsInstanceOf<CircularDependencyProperty2>(dependency1.Dependency);
 
-        //    Assert.NotNull(dependency2.Dependency);
-        //    Assert.IsInstanceOf<CircularDependencyProperty1>(dependency2.Dependency);
-        //}
+            Assert.NotNull(dependency2.Dependency);
+            Assert.IsInstanceOf<CircularDependencyProperty1>(dependency2.Dependency);
+        }
 	}
 }

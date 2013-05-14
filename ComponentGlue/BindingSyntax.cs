@@ -110,6 +110,14 @@ namespace ComponentGlue
         /// <param name="paramValue"></param>
         /// <returns></returns>
         TReturn WithConstructorParameter(string paramName, object paramValue);
+
+        /// <summary>
+        /// Adds a property value to be used for the component.
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="propertyValue"></param>
+        /// <returns></returns>
+        TReturn WithPropertyValue(string propertyName, object propertyValue);
     }
 
     public interface IBindingSyntaxWith : IBindingSyntaxWith<IBindingSyntaxWith>

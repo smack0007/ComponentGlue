@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ComponentGlue.Tests.Classes
 {
-    public class StubObjectFoo : IStubObject
+    public class StubObjectFooConstructor : IStubObject
     {
         public string ID
         {
@@ -13,7 +13,7 @@ namespace ComponentGlue.Tests.Classes
             set;
         }
 
-        public StubObjectFoo(string id)
+        public StubObjectFooConstructor(string id)
         {
             this.ID = id;
         }

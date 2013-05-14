@@ -19,7 +19,7 @@ namespace ComponentGlue
             this.strategies = new List<IComponentBindingStrategy>();
         }
 
-        public object Resolve(IComponentContainer container)
+        public object Resolve(ComponentContainer container)
         {
             var components = Array.CreateInstance(this.binding.ComponentType.GetElementType(), this.strategies.Count);
 
@@ -63,6 +63,12 @@ namespace ComponentGlue
         public IBindingSyntaxAddOrWith WithConstructorParameter(string paramName, object paramValue)
         {
             ((IBindingSyntaxWith)this.GetCurrentStrategy()).WithConstructorParameter(paramName, paramValue);
+            return this;
+        }
+
+        public IBindingSyntaxAddOrWith WithPropertyValue(string propertyName, object propertyValue)
+        {
+            ((IBindingSyntaxWith)this.GetCurrentStrategy()).WithPropertyValue(propertyName, propertyValue);
             return this;
         }
     }

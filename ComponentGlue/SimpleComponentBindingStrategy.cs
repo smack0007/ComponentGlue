@@ -9,9 +9,12 @@ namespace ComponentGlue
     {
         ComponentBinding binding;
         Type type;
+        
         bool isSingleton;
         object instance;
+        
         Dictionary<string, object> constructorParameters;
+        Dictionary<string, object> propertyValues;
 
         public SimpleComponentBindingStrategy(ComponentBinding binding, Type type)
         {
@@ -33,12 +36,12 @@ namespace ComponentGlue
             }
         }
 
-        public object Resolve(IComponentContainer container)
+        public object Resolve(ComponentContainer container)
         {
             if (!this.isSingleton || this.instance == null)
             {
                 // The order here is important for resolving circular dependencies.
-                this.instance = container.Construct(this.type, this.constructorParameters);
+                this.instance = container.Construct(this.type, this.constructorParameters, this.propertyValues);
                 container.ResolveProperties(this.instance);
             }
 
@@ -70,6 +73,19 @@ namespace ComponentGlue
                 throw new BindingSyntaxException(string.Format("Parameter \"{0}\" is already set for the component type \"{1}\".", paramName, this.binding.ComponentType));
 
             this.constructorParameters[paramName] = paramValue;
+
+            return this;
+        }
+
+        public IBindingSyntaxWith WithPropertyValue(string propertyName, object propertyValue)
+        {
+            if (this.propertyValues == null)
+                this.propertyValues = new Dictionary<string, object>();
+
+            if (this.propertyValues.ContainsKey(propertyName))
+                throw new BindingSyntaxException(string.Format("Property value \"{0}\" is already set for the component type \"{1}\".", propertyName, this.binding.ComponentType));
+
+            this.propertyValues[propertyName] = propertyValue;
 
             return this;
         }

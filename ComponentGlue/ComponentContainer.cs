@@ -220,12 +220,38 @@ namespace ComponentGlue
             return parametersToInject;
         }
 
+        private void ApplyPropertyValues(object component, IDictionary<string, object> propertyValues)
+        {
+            Type type = component.GetType();
+            PropertyInfo[] properties = type.GetProperties();
+
+            foreach (KeyValuePair<string, object> pair in propertyValues)
+            {
+                PropertyInfo property = properties.Where(x => x.Name == pair.Key).SingleOrDefault();
+
+                if (property == null)
+                    throw new ComponentResolutionException(string.Format("Type \"{0}\" does not have a property named \"{1}\".", type, pair.Key));
+
+                try
+                {
+                    property.SetValue(component, pair.Value, null);
+                }
+                catch (Exception ex)
+                {
+                    throw new ComponentResolutionException(string.Format("Failed while setting property value \"{0}\" for type \"{1}\".", pair.Key, type), ex);
+                }
+            }
+        }
+
 		/// <summary>
 		/// Constructs a new instance of a type.
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		public object Construct(Type type, IDictionary<string, object> parameters)
+		internal object Construct(
+            Type type,
+            IDictionary<string, object> constructorParameters,
+            IDictionary<string, object> propertyValues)
 		{
 			if (type.IsInterface)
 				throw new ComponentResolutionException(string.Format("{0} is an interface and cannot be constructed.", type));
@@ -246,11 +272,11 @@ namespace ComponentGlue
 			{
                 ConstructorInfo constructor = this.GetConstructorToInject(type);
 
-                object[] constructorParameters = this.BuildConstructorParameters(type, constructor, parameters);
+                object[] componentConstructorParameters = this.BuildConstructorParameters(type, constructor, constructorParameters);
                 		
 				try
 				{
-					component = constructor.Invoke(constructorParameters);
+                    component = constructor.Invoke(componentConstructorParameters);
 				}
 				catch (TargetInvocationException ex)
 				{
@@ -259,6 +285,9 @@ namespace ComponentGlue
 			}
 
 			this.constructStack.Pop();
+
+            if (propertyValues != null)
+                this.ApplyPropertyValues(component, propertyValues);
 
 			return component;
 		}
@@ -287,7 +316,7 @@ namespace ComponentGlue
                 }
                 else
                 {
-                    component = this.Construct(type, null);
+                    component = this.Construct(type, null, null);
 					this.ResolveProperties(component);
                 }
 			}
@@ -323,7 +352,7 @@ namespace ComponentGlue
 
 			// Component not found
 			if (component == null)
-				component = this.Construct(componentType, null);
+				component = this.Construct(componentType, null, null);
 
 			return component;
 		}

@@ -7,6 +7,6 @@ namespace ComponentGlue
 {
     internal interface IComponentBindingStrategy
     {
-        object Resolve(IComponentContainer container);
+        object Resolve(ComponentContainer container);
     }
 }

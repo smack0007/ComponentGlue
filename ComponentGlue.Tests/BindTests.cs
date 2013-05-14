@@ -187,7 +187,7 @@ namespace ComponentGlue.Tests
         }
 
         [Test]
-        public void Multiple_Calls_To_WithConstructorParameter_Are_Passed_To_Constructor()
+        public void Multiple_WithConstructorParameter_Are_Passed_To_Constructor()
         {
             ComponentContainer container = new ComponentContainer();
             
@@ -233,6 +233,58 @@ namespace ComponentGlue.Tests
 
             var obj = container.Resolve<IFoo>();
             Assert.AreSame(bar, ((Foo1)obj).Bar);
+        }
+
+        [Test]
+        public void WithPropertyValue_Is_Set_After_Resolution()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            container.Bind<Has1Property>().To<Has1Property>()
+                .AsTransient()
+                .WithPropertyValue("ID", "abc");
+
+            var obj = container.Resolve<Has1Property>();
+            Assert.AreSame("abc", obj.ID);
+        }
+
+        [Test]
+        public void Multiple_WithPropertyValue_Are_Set_After_Resolution()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            container.Bind<Has2Properties>().To<Has2Properties>()
+                .AsTransient()
+                .WithPropertyValue("ID", "abc")
+                .WithPropertyValue("Name", "def");
+
+            var obj = container.Resolve<Has2Properties>();
+            Assert.AreSame("abc", obj.ID);
+            Assert.AreSame("def", obj.Name);
+        }
+
+        [Test, ExpectedException(typeof(ComponentResolutionException))]
+        public void WithPropertyValue_That_Does_Not_Exist_Throws_Exception_When_Resolving()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            container.Bind<Has1Property>().To<Has1Property>()
+                .AsTransient()
+                .WithPropertyValue("Foo", "abc");
+
+            var obj = container.Resolve<Has1Property>();
+        }
+
+        [Test, ExpectedException(typeof(ComponentResolutionException))]
+        public void WithPropertyValue_That_Has_No_Setter_Throws_Exception_When_Resolving()
+        {
+            ComponentContainer container = new ComponentContainer();
+
+            container.Bind<Has1PropertyWithNoSetter>().To<Has1PropertyWithNoSetter>()
+                .AsTransient()
+                .WithPropertyValue("ID", "abc");
+
+            var obj = container.Resolve<Has1PropertyWithNoSetter>();
         }
 	}
 }

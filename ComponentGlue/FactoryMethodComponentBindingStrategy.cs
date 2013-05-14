@@ -17,7 +17,7 @@ namespace ComponentGlue
             this.factoryMethod = factoryMethod;
         }
 
-        public object Resolve(IComponentContainer container)
+        public object Resolve(ComponentContainer container)
         {
             return this.factoryMethod(container);
         }

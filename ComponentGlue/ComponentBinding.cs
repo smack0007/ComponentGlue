@@ -33,7 +33,7 @@ namespace ComponentGlue
             }
         }
 
-        public object Resolve(IComponentContainer container)
+        public object Resolve(ComponentContainer container)
         {
             if (container == null)
                 throw new ArgumentNullException("container");

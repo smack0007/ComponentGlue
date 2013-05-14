@@ -57,5 +57,5 @@ Syntax
 			ToMultiple
 				Add
 					As | AsTransient | AsSingleton
-						WithConstructorParameter
+						WithConstructorParameter | WithPropertyValue
 						
