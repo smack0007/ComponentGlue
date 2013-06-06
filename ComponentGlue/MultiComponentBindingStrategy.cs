@@ -72,16 +72,9 @@ namespace ComponentGlue
             return this;
         }
 
-
         public IBindingSyntaxAddOrWith WithPropertyResolution()
         {
             ((IBindingSyntaxWith)this.GetCurrentStrategy()).WithPropertyResolution();
-            return this;
-        }
-
-        public IBindingSyntaxAddOrWith WithoutPropertyResolution()
-        {
-            ((IBindingSyntaxWith)this.GetCurrentStrategy()).WithoutPropertyResolution();
             return this;
         }
     }

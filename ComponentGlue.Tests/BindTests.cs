@@ -357,5 +357,36 @@ namespace ComponentGlue.Tests
 
             var obj = container.Resolve<Has1PropertyWithNoSetter>();
         }
+
+        [Test]
+        public void WithPropertyResolution_Resolves_Properties_Of_Constructed_Components()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IFoo>().To<Foo1>();
+            container.Bind<IBar>().To<Bar2>();
+            container.Bind<PropertyInject>().ToSelf().AsTransient().WithPropertyResolution();
+                        
+            var obj = container.Resolve<PropertyInject>();
+
+            Assert.NotNull(obj.Foo);
+            Assert.IsInstanceOf<Foo1>(obj.Foo);
+
+            Assert.NotNull(obj.Bar);
+            Assert.IsInstanceOf<Bar2>(obj.Bar);
+        }
+
+        [Test]
+        public void Excluding_WithPropertyResolution_Does_Not_Resolve_Properties_Of_Constructed_Components()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IFoo>().To<Foo1>();
+            container.Bind<IBar>().To<Bar2>();
+            container.Bind<PropertyInject>().ToSelf().AsTransient();
+
+            var obj = container.Resolve<PropertyInject>();
+
+            Assert.IsNull(obj.Foo);
+            Assert.IsNull(obj.Bar);
+        }
 	}
 }

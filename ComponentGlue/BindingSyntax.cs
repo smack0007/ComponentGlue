@@ -11,6 +11,11 @@ namespace ComponentGlue
 
     public interface IBindingSyntaxAdd
     {
+        /// <summary>
+        /// Adds a type to a multiple component bind.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         IBindingSyntaxAs<IBindingSyntaxAddOrWith> Add(Type type);
     }
         
@@ -98,6 +103,10 @@ namespace ComponentGlue
         /// <param name="component"></param>
         void ToFactoryMethod<T>(Func<IComponentResolver, T> factoryMethod);
 
+        /// <summary>
+        /// Sets the component as a multi component.
+        /// </summary>
+        /// <returns></returns>
         IBindingSyntaxAdd ToMultiple();
 
         /// <summary>
@@ -125,9 +134,11 @@ namespace ComponentGlue
         /// <returns></returns>
         TReturn WithPropertyValue(string propertyName, object propertyValue);
 
+        /// <summary>
+        /// Sets the component to have it's properties which are marked with the ResolveAttribute to be automatically resolved on construction.
+        /// </summary>
+        /// <returns></returns>
         TReturn WithPropertyResolution();
-
-        TReturn WithoutPropertyResolution();
     }
 
     public interface IBindingSyntaxWith : IBindingSyntaxWith<IBindingSyntaxWith>

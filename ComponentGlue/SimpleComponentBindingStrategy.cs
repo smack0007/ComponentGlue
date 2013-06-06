@@ -99,11 +99,5 @@ namespace ComponentGlue
             this.doResolveProperties = true;
             return this;
         }
-
-        public IBindingSyntaxWith WithoutPropertyResolution()
-        {
-            this.doResolveProperties = false;
-            return this;
-        }
     }
 }
