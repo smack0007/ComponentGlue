@@ -24,7 +24,7 @@ namespace ComponentGlue
 		public IBindingSyntaxTo Bind(Type type)
 		{
 			if (this.bindings.ContainsKey(type))
-				throw new InvalidOperationException(string.Format("A binding has already been provided for the type {0}.", type));
+				throw new BindingSyntaxException(string.Format("A binding has already been provided for the type {0}.", type));
 
 			ComponentBinding binding = new ComponentBinding(type);
 			this.bindings.Add(type, binding);
@@ -40,12 +40,14 @@ namespace ComponentGlue
 		public IBindingSyntaxTo Rebind(Type type)
 		{
 			if (!this.bindings.ContainsKey(type))
-			{
-				ComponentBinding binding = new ComponentBinding(type);
-				this.bindings.Add(type, binding);
-			}
+                throw new BindingSyntaxException(string.Format("No binding has been provided for the type {0}.", type));
 
-			return this.bindings[type];
+            // Dispose of old binding.
+            this.bindings[type].Dispose();
+
+            ComponentBinding binding = new ComponentBinding(type);
+            this.bindings[type] = binding;
+            return binding;
 		}
 
         public IEnumerator<ComponentBinding> GetEnumerator()

@@ -95,6 +95,7 @@
     <Compile Include="ResolvePropertiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\PropertyInject.cs" />
+    <Compile Include="TestBindingStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ComponentGlue\ComponentGlue.csproj">

@@ -8,7 +8,7 @@ namespace ComponentGlue.Tests
 {
 	[TestFixture]
 	public class BindTests
-	{
+	{        
 		[Test]
 		public void Bind_Type_As_Transient_Injects_New_Instance_Always()
 		{
@@ -70,15 +70,13 @@ namespace ComponentGlue.Tests
 			Assert.IsFalse(container.HasBinding<IFoo>());
 		}
 
-		[Test]
-		public void Rebind_Adds_Binding_When_Binding_Does_Not_Already_Exist()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.Rebind<IFoo>().To<Foo1>();
-
-			Assert.IsTrue(container.HasBinding<IFoo>());
-		}
-
+        [Test, ExpectedException(typeof(BindingSyntaxException))]
+        public void Rebind_Throws_Exception_When_Binding_Does_Not_Exist()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.Rebind<IBar>().To<Bar2>();
+        }
+		
 		[Test]
 		public void Rebind_Does_Not_Throw_Exception_When_Binding_Already_Exists()
 		{
@@ -86,6 +84,18 @@ namespace ComponentGlue.Tests
 			container.Bind<IBar>().To<Bar1>();
 			container.Rebind<IBar>().To<Bar2>();
 		}
+
+        [Test]
+        public void Rebind_Calls_Dispose_On_Old_Binding()
+        {
+            var strategy = new TestBindingStrategy<IBar>(() => new Bar1());
+
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().ToStrategy(strategy);
+            container.Rebind<IBar>().To<Bar2>();
+
+            Assert.IsTrue(strategy.DisposeWasCalled);
+        }
 
 		[Test]
 		public void Specific_Binding_Overrides_Global_Binding()
@@ -172,33 +182,10 @@ namespace ComponentGlue.Tests
 			Assert.IsTrue(factoryMethodCalled);
 		}
 
-        class TestStrategy<T> : IComponentBindingStrategy, IDisposable
-        {
-            Func<T> factory;
-            public bool ResolveWasCalled = false;
-            public bool DisposeWasCalled = false;
-
-            public TestStrategy(Func<T> factory)
-            {
-                this.factory = factory;
-            }
-
-            public object Resolve(ComponentContainer container)
-            {
-                ResolveWasCalled = true;
-                return this.factory();
-            }
-
-            public void Dispose()
-            {
-                DisposeWasCalled = true;
-            }
-        }
-
         [Test]
         public void Bind_ToStrategy_Calls_Strategy()
         {
-            var strategy = new TestStrategy<Bar1>(() => new Bar1());
+            var strategy = new TestBindingStrategy<Bar1>(() => new Bar1());
 
             ComponentContainer container = new ComponentContainer();
             container.Bind<IBar>().ToStrategy(strategy);
@@ -211,7 +198,7 @@ namespace ComponentGlue.Tests
         [Test, ExpectedException(typeof(ComponentResolutionException))]
         public void Bind_ToStrategy_Where_Strategy_Returns_Wrong_Type_Throws_Exception()
         {
-            var strategy = new TestStrategy<Simple>(() => new Simple());
+            var strategy = new TestBindingStrategy<Simple>(() => new Simple());
 
             ComponentContainer container = new ComponentContainer();
             container.Bind<IBar>().ToStrategy(strategy);
@@ -222,7 +209,7 @@ namespace ComponentGlue.Tests
         [Test, ExpectedException(typeof(ComponentResolutionException))]
         public void Bind_ToStrategy_Where_Strategy_Returns_Null_Throws_Exception()
         {
-            var strategy = new TestStrategy<Bar1>(() => null);
+            var strategy = new TestBindingStrategy<Bar1>(() => null);
 
             ComponentContainer container = new ComponentContainer();
             container.Bind<IBar>().ToStrategy(strategy);
@@ -233,7 +220,7 @@ namespace ComponentGlue.Tests
         [Test]
         public void Bind_ToStrategy_Strategy_Is_Disposed_With_Container()
         {
-            var strategy = new TestStrategy<Bar1>(() => new Bar1());
+            var strategy = new TestBindingStrategy<Bar1>(() => new Bar1());
 
             ComponentContainer container = new ComponentContainer();
             container.Bind<IBar>().ToStrategy(strategy);
