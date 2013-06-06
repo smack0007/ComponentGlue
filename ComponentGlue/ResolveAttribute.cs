@@ -6,7 +6,7 @@ namespace ComponentGlue
 	/// Marks a constructor or property as injected.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-	public class InjectAttribute : Attribute
+	public class ResolveAttribute : Attribute
 	{
 	}
 }

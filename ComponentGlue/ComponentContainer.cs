@@ -17,21 +17,20 @@ namespace ComponentGlue
 		/// </summary>
 		Stack<Type> constructStack;
 
-		Type injectAttributeType;
+		Type resolveAttributeType;
 		Type defaultComponentAttributeType;
 
 		/// <summary>
 		/// The attribute type which indicates injection.
 		/// </summary>
-		public Type InjectAttributeType
+		public Type ResolveAttributeType
 		{
-			get { return this.injectAttributeType; }
+			get { return this.resolveAttributeType; }
 
 			set
 			{
 				this.EnsureTypeIsAttribute(value);
-
-				this.injectAttributeType = value;
+				this.resolveAttributeType = value;
 			}
 		}
 
@@ -77,7 +76,7 @@ namespace ComponentGlue
 			this.Bind(typeof(ComponentContainer)).ToConstant(this);
 			this.Bind(typeof(IComponentContainer)).ToConstant(this);
 
-			this.injectAttributeType = typeof(InjectAttribute);
+			this.resolveAttributeType = typeof(ResolveAttribute);
 			this.defaultComponentAttributeType = typeof(DefaultComponentAttribute);
 		}
 
@@ -170,7 +169,7 @@ namespace ComponentGlue
                     if (constructor.GetParameters().Length == 0)
                         injectableConstructor = constructor;
 
-                    foreach (Attribute attribute in constructor.GetCustomAttributes(this.injectAttributeType, true))
+                    foreach (Attribute attribute in constructor.GetCustomAttributes(this.resolveAttributeType, true))
                     {
                         if (injectableConstructor != null)
                             throw new ComponentResolutionException(string.Format("Multiple injectable constructors found for type {0}.", type));
@@ -372,7 +371,7 @@ namespace ComponentGlue
 			{
 				foreach (Attribute attribute in property.GetCustomAttributes(true))
 				{
-					if (this.injectAttributeType.IsInstanceOfType(attribute))
+					if (this.resolveAttributeType.IsInstanceOfType(attribute))
 					{
 						if (!property.CanWrite)
 							throw new ComponentResolutionException(string.Format("Property \"{0}\" of type \"{1}\" is marked as Inject but not writable.", property.Name, type));

@@ -5,7 +5,7 @@ namespace ComponentGlue.Tests.Classes
 {
 	public class CircularDependencyProperty2
 	{
-		[Inject]
+		[Resolve]
 		public CircularDependencyProperty1 Dependency
 		{
 			get;

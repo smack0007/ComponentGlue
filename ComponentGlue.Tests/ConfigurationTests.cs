@@ -14,21 +14,21 @@ namespace ComponentGlue.Tests
 		public void Assigning_InjectAttributeType_To_Null_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.InjectAttributeType = null;
+			container.ResolveAttributeType = null;
 		}
 
 		[Test, ExpectedException]
 		public void Assigning_InjectAttributeType_To_Non_Attribute_Type_Throws_Exception()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.InjectAttributeType = typeof(ConfigurationTests);
+			container.ResolveAttributeType = typeof(ConfigurationTests);
 		}
 
 		[Test]
 		public void Properties_Can_Be_Injected_When_Using_Custom_InjectAttribute()
 		{
 			ComponentContainer container = new ComponentContainer();
-			container.InjectAttributeType = typeof(CustomInjectAttribute);
+			container.ResolveAttributeType = typeof(CustomInjectAttribute);
 			container.Bind<IFoo>().To<Foo1>();
 			container.Bind<IBar>().To<Bar1>();
 
