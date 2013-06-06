@@ -41,7 +41,15 @@ namespace ComponentGlue
             if (this.strategy == null)
                 throw new ComponentResolutionException("Binding has a null strategy.");
 
-            return this.strategy.Resolve(container);
+            object concrete = this.strategy.Resolve(container);
+
+            if (concrete == null)
+                throw new ComponentResolutionException(string.Format("Strategy type {0} returned null.", this.strategy.GetType()));
+
+            if (!this.ComponentType.IsAssignableFrom(concrete.GetType()))
+                throw new ComponentResolutionException(string.Format("Strategy type {0} returned type {1} which is not assignable to {2}.", this.strategy.GetType(), concrete.GetType(), this.ComponentType));
+
+            return concrete;
         }
         
 		private void EnsureComponentTypeIsAssignableFromConcreteType(Type concrete)
@@ -95,6 +103,14 @@ namespace ComponentGlue
             this.strategy = new MultiComponentBindingStrategy(this);
 
             return (IBindingSyntaxAdd)this.strategy;
+        }
+
+        public void ToStrategy(IComponentBindingStrategy strategy)
+        {
+            if (strategy == null)
+                throw new ArgumentNullException("strategy");
+
+            this.strategy = strategy;
         }
     }
 }

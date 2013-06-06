@@ -16,6 +16,8 @@ namespace ComponentGlue
         Dictionary<string, object> constructorParameters;
         Dictionary<string, object> propertyValues;
 
+        bool doResolveProperties;
+
         public SimpleComponentBindingStrategy(ComponentBinding binding, Type type)
         {
             if (binding == null)
@@ -42,7 +44,9 @@ namespace ComponentGlue
             {
                 // The order here is important for resolving circular dependencies.
                 this.instance = container.Construct(this.type, this.constructorParameters, this.propertyValues);
-                container.ResolveProperties(this.instance);
+                
+                if (this.doResolveProperties)
+                    container.ResolveProperties(this.instance);
             }
 
             return this.instance;
@@ -87,6 +91,18 @@ namespace ComponentGlue
 
             this.propertyValues[propertyName] = propertyValue;
 
+            return this;
+        }
+
+        public IBindingSyntaxWith WithPropertyResolution()
+        {
+            this.doResolveProperties = true;
+            return this;
+        }
+
+        public IBindingSyntaxWith WithoutPropertyResolution()
+        {
+            this.doResolveProperties = false;
             return this;
         }
     }

@@ -155,7 +155,7 @@ namespace ComponentGlue.Tests
 			ComponentContainer container = new ComponentContainer();
 			container.Bind<IBar>().ToFactoryMethod((x) => new Foo1(new Bar1()));
 		}
-
+                
 		[Test]
 		public void Bind_ToFactoryMethod_Calls_FactoryMethod_When_Resolving()
 		{
@@ -171,6 +171,77 @@ namespace ComponentGlue.Tests
 			IBar bar = container.Resolve<IBar>();
 			Assert.IsTrue(factoryMethodCalled);
 		}
+
+        class TestStrategy<T> : IComponentBindingStrategy, IDisposable
+        {
+            Func<T> factory;
+            public bool ResolveWasCalled = false;
+            public bool DisposeWasCalled = false;
+
+            public TestStrategy(Func<T> factory)
+            {
+                this.factory = factory;
+            }
+
+            public object Resolve(ComponentContainer container)
+            {
+                ResolveWasCalled = true;
+                return this.factory();
+            }
+
+            public void Dispose()
+            {
+                DisposeWasCalled = true;
+            }
+        }
+
+        [Test]
+        public void Bind_ToStrategy_Calls_Strategy()
+        {
+            var strategy = new TestStrategy<Bar1>(() => new Bar1());
+
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().ToStrategy(strategy);
+
+            var bar = container.Resolve<IBar>();
+
+            Assert.IsTrue(strategy.ResolveWasCalled);
+        }
+
+        [Test, ExpectedException(typeof(ComponentResolutionException))]
+        public void Bind_ToStrategy_Where_Strategy_Returns_Wrong_Type_Throws_Exception()
+        {
+            var strategy = new TestStrategy<Simple>(() => new Simple());
+
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().ToStrategy(strategy);
+
+            var bar = container.Resolve<IBar>();
+        }
+
+        [Test, ExpectedException(typeof(ComponentResolutionException))]
+        public void Bind_ToStrategy_Where_Strategy_Returns_Null_Throws_Exception()
+        {
+            var strategy = new TestStrategy<Bar1>(() => null);
+
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().ToStrategy(strategy);
+
+            var bar = container.Resolve<IBar>();
+        }
+
+        [Test]
+        public void Bind_ToStrategy_Strategy_Is_Disposed_With_Container()
+        {
+            var strategy = new TestStrategy<Bar1>(() => new Bar1());
+
+            ComponentContainer container = new ComponentContainer();
+            container.Bind<IBar>().ToStrategy(strategy);
+
+            container.Dispose();
+
+            Assert.IsTrue(strategy.DisposeWasCalled);
+        }
                 
         [Test]
         public void WithConstructorParameter_Is_Passed_To_Constructor()

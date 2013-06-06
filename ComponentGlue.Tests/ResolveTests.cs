@@ -70,8 +70,8 @@ namespace ComponentGlue.Tests
         public void Circular_Dependency_Can_Be_Resolved_Using_Property_Injection_And_Singletons()
         {
             ComponentContainer container = new ComponentContainer();
-            container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton();
-            container.Bind<CircularDependencyProperty2>().ToSelf().AsSingleton();
+            container.Bind<CircularDependencyProperty1>().ToSelf().AsSingleton().WithPropertyResolution();
+            container.Bind<CircularDependencyProperty2>().ToSelf().AsSingleton().WithPropertyResolution();
 
             var dependency1 = container.Resolve<CircularDependencyProperty1>();
             var dependency2 = container.Resolve<CircularDependencyProperty2>();

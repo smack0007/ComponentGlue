@@ -48,13 +48,10 @@
     <Compile Include="ComponentBindingCollection.cs" />
     <Compile Include="ConstantComponentBindingStrategy.cs" />
     <Compile Include="FactoryMethodComponentBindingStrategy.cs" />
-    <Compile Include="IBindingSyntaxAddOrAs.cs" />
-    <Compile Include="IBindingSyntaxAddOrWith.cs" />
     <Compile Include="ComponentBindType.cs" />
     <Compile Include="ComponentResolutionException.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
-    <Compile Include="IBindingSyntaxAdd.cs" />
     <Compile Include="IComponentBindingStrategy.cs" />
     <Compile Include="IComponentContainer.cs" />
     <Compile Include="IComponentResolver.cs" />

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ComponentGlue
 {
-    internal interface IComponentBindingStrategy
+    public interface IComponentBindingStrategy
     {
         object Resolve(ComponentContainer container);
     }

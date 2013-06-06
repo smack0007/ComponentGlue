@@ -99,6 +99,12 @@ namespace ComponentGlue
         void ToFactoryMethod<T>(Func<IComponentResolver, T> factoryMethod);
 
         IBindingSyntaxAdd ToMultiple();
+
+        /// <summary>
+        /// Sets the component as a custom binding strategy.
+        /// </summary>
+        /// <param name="strategy"></param>
+        void ToStrategy(IComponentBindingStrategy strategy);
     }
 
     public interface IBindingSyntaxWith<TReturn>
@@ -118,6 +124,10 @@ namespace ComponentGlue
         /// <param name="propertyValue"></param>
         /// <returns></returns>
         TReturn WithPropertyValue(string propertyName, object propertyValue);
+
+        TReturn WithPropertyResolution();
+
+        TReturn WithoutPropertyResolution();
     }
 
     public interface IBindingSyntaxWith : IBindingSyntaxWith<IBindingSyntaxWith>
