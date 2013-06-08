@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\CustomDefaultComponentAttribute.cs" />
-    <Compile Include="Attributes\CustomInjectAttribute.cs" />
+    <Compile Include="Attributes\CustomResolveAttribute.cs" />
     <Compile Include="AutoBindTests.cs" />
     <Compile Include="AutoFactoryTests.cs" />
     <Compile Include="BindTests.cs" />
@@ -56,9 +56,6 @@
     <Compile Include="Classes\CircularDependency2.cs" />
     <Compile Include="Classes\CircularDependencyProperty1.cs" />
     <Compile Include="Classes\CircularDependencyProperty2.cs" />
-    <Compile Include="Classes\ConcreteA.cs" />
-    <Compile Include="Classes\ConcreteAB.cs" />
-    <Compile Include="Classes\ConcreteB.cs" />
     <Compile Include="Classes\CustomAttributePropertyInject.cs" />
     <Compile Include="Classes\BarWithCustomDefaultComponentAttribte.cs" />
     <Compile Include="Classes\FuncClassWithOneParam.cs" />
@@ -66,12 +63,11 @@
     <Compile Include="Classes\Has1PropertyWithNoSetter.cs" />
     <Compile Include="Classes\Has2Params.cs" />
     <Compile Include="Classes\Has2Properties.cs" />
-    <Compile Include="Classes\IOnlyExistsOnce.cs" />
-    <Compile Include="Classes\ISimple.cs" />
+    <Compile Include="Classes\INotImplemented.cs" />
+    <Compile Include="Classes\IHasOneImplementor.cs" />
     <Compile Include="Classes\IStubObject.cs" />
     <Compile Include="Classes\NeedsArrayOfStubObjects.cs" />
-    <Compile Include="Classes\OnlyExistsOnce.cs" />
-    <Compile Include="Classes\Simple.cs" />
+    <Compile Include="Classes\HasOneImplementor.cs" />
     <Compile Include="Classes\StubObject.cs" />
     <Compile Include="Classes\StubObjectBarConstructor.cs" />
     <Compile Include="Classes\StubObjectFooConstructor.cs" />
@@ -95,6 +91,7 @@
     <Compile Include="ResolvePropertiesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Classes\PropertyInject.cs" />
+    <Compile Include="TestAutoBindingStrategy.cs" />
     <Compile Include="TestBindingStrategy.cs" />
   </ItemGroup>
   <ItemGroup>

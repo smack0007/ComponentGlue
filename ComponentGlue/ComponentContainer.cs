@@ -18,8 +18,7 @@ namespace ComponentGlue
 		Stack<Type> constructStack;
 
 		Type resolveAttributeType;
-		Type defaultComponentAttributeType;
-
+		
 		/// <summary>
 		/// The attribute type which indicates injection.
 		/// </summary>
@@ -29,26 +28,10 @@ namespace ComponentGlue
 
 			set
 			{
-				this.EnsureTypeIsAttribute(value);
+                if (!typeof(Attribute).IsAssignableFrom(value))
+                    throw new InvalidOperationException(string.Format("{0} is not an Attribute type.", value));
+				
 				this.resolveAttributeType = value;
-			}
-		}
-
-		/// <summary>
-		/// The attribute type which indicates injection.
-		/// </summary>
-		public Type DefaultComponentAttributeType
-		{
-			get { return this.defaultComponentAttributeType; }
-
-			set
-			{
-				this.EnsureTypeIsAttribute(value);
-
-				if (!typeof(IDefaultComponentAttribute).IsAssignableFrom(value))
-					throw new InvalidOperationException("DefaultComponentAttributeType must be assignable from IDefaultComponentAttribute.");
-
-				this.defaultComponentAttributeType = value;
 			}
 		}
 
@@ -77,7 +60,6 @@ namespace ComponentGlue
 			this.Bind(typeof(IComponentContainer)).ToConstant(this);
 
 			this.resolveAttributeType = typeof(ResolveAttribute);
-			this.defaultComponentAttributeType = typeof(DefaultComponentAttribute);
 		}
 
 		/// <summary>
@@ -102,13 +84,7 @@ namespace ComponentGlue
 
 			this.componentBindings = null;
 		}
-
-		private void EnsureTypeIsAttribute(Type type)
-		{
-			if (!typeof(Attribute).IsAssignableFrom(type))
-				throw new InvalidOperationException(string.Format("{0} is not an Attribute type.", type));
-		}
-
+        
         private bool IsAutoFactoryType(Type type)
         {
             if (typeof(MulticastDelegate).IsAssignableFrom(type))
@@ -405,109 +381,60 @@ namespace ComponentGlue
 			return this.globalBindings.Rebind(type);
 		}
 
-		/// <summary>
-		/// Performs auto binding on all the types in the entry assembly as Transient.
-		/// </summary>
-		public void AutoBind()
-		{
-			this.DoAutoBind(Assembly.GetEntryAssembly(), default(ComponentBindType), null);
-		}
+        /// <summary>
+        /// Performs auto binding on types from the entry assembly using the default AutoBindStrategy.
+        /// </summary>
+        public void AutoBind()
+        {
+            this.AutoBind(Assembly.GetEntryAssembly(), new AutoBindStrategy());
+        }
+
+        /// <summary>
+        /// Performs auto binding on types from the given assembly using the default AutoBindStrategy.
+        /// </summary>
+        public void AutoBind(Assembly assembly)
+        {
+            this.AutoBind(assembly, new AutoBindStrategy());
+        }
 
 		/// <summary>
-		/// Performs auto binding on all the types under the given namespace in the given assemly as the given bind type.
+		/// Performs auto binding on types from the given assembly using the given strategy.
 		/// </summary>
-		/// <param name="assembly"></param>
-		/// <param name="namespace"></param>
-		/// <param name="bindType"></param>
-		public void AutoBind(Assembly assembly, ComponentBindType bindType)
-		{
-			this.DoAutoBind(assembly, bindType, null);
-		}
-
-		/// <summary>
-		/// Performs auto binding on all the types under the given namespace in the given assemly as the given bind type.
-		/// </summary>
-		/// <param name="assembly"></param>
-		/// <param name="namespace"></param>
-		/// <param name="bindType"></param>
-		public void AutoBind(Assembly assembly, string @namespace, ComponentBindType bindType)
-		{
-			this.DoAutoBind(assembly, bindType, x => x.Namespace == @namespace);
-		}
-
-		/// <summary>
-		/// Performs auto binding on all the types which pass the where clause in the given assemly as the given bind type.
-		/// </summary>
-		/// <param name="assembly"></param>
-		/// <param name="bindType"></param>
-		public void AutoBind(Assembly assembly, ComponentBindType bindType, Func<Type, bool> whereFunc)
-		{
-			if (whereFunc == null)
-				throw new ArgumentNullException("whereFunc");
-
-			this.DoAutoBind(assembly, bindType, whereFunc);
-		}
-
-		private void DoAutoBind(Assembly assembly, ComponentBindType bindType, Func<Type, bool> whereFunc)
+		public void AutoBind(Assembly assembly, IAutoBindStrategy strategy)
 		{
 			if (assembly == null)
 				throw new ArgumentNullException("assembly");
 
-			Dictionary<Type, List<Type>> implementors = new Dictionary<Type, List<Type>>();
+            if (strategy == null)
+                throw new ArgumentNullException("strategy");
+
+			Dictionary<Type, List<Type>> interfacesToTypesMap = new Dictionary<Type, List<Type>>();
 
 			IEnumerable<Type> types = assembly.GetTypes();
-
-			if (whereFunc != null)
-				types = types.Where(whereFunc);
-
-			foreach (Type componentType in types)
+            			
+			foreach (Type type in types)
 			{
-				if (componentType.IsClass && !componentType.IsAbstract)
-				{
-					if (!this.HasBinding(componentType))
-						this.Bind(componentType).ToSelf().As(bindType);
-
-					foreach (Type interfaceType in componentType.GetInterfaces())
+				if (type.IsClass)
+				{					
+					foreach (Type interfaceType in type.GetInterfaces())
 					{
-						if (!implementors.ContainsKey(interfaceType))
-							implementors.Add(interfaceType, new List<Type>());
+						if (!interfacesToTypesMap.ContainsKey(interfaceType))
+							interfacesToTypesMap.Add(interfaceType, new List<Type>());
 
-						if (!implementors[interfaceType].Contains(componentType))
-							implementors[interfaceType].Add(componentType);
+						if (!interfacesToTypesMap[interfaceType].Contains(type))
+							interfacesToTypesMap[interfaceType].Add(type);
 					}
 				}
+                else if (type.IsInterface)
+                {
+                    if (!interfacesToTypesMap.ContainsKey(type))
+                        interfacesToTypesMap.Add(type, new List<Type>());
+                }
 			}
 
-			foreach (Type interfaceType in implementors.Keys)
+			foreach (KeyValuePair<Type, List<Type>> interfaceToTypes in interfacesToTypesMap)
 			{
-				if (!this.HasBinding(interfaceType))
-				{
-					if (implementors[interfaceType].Count == 1) // One implementor so we have the default binding
-					{
-						this.Bind(interfaceType).To(implementors[interfaceType][0]).As(bindType);
-					}
-					else
-					{
-						Type defaultComponent = null;
-
-						foreach (Type componentType in implementors[interfaceType])
-						{
-							foreach (IDefaultComponentAttribute attribute in componentType.GetCustomAttributes(this.defaultComponentAttributeType, false))
-							{
-								if(attribute.ComponentType == interfaceType)
-								{
-									if (defaultComponent != null)
-										throw new ComponentResolutionException(string.Format("More than one component is marked as DefaultComponent for type {0}.", interfaceType));
-
-									defaultComponent = componentType;
-								}
-							}
-						}
-
-						if (defaultComponent != null)
-							this.Bind(interfaceType).To(defaultComponent).As(bindType);
-					}
-				}
+                strategy.Bind(this, interfaceToTypes.Key, interfaceToTypes.Value);
 			}
 		}
 	}

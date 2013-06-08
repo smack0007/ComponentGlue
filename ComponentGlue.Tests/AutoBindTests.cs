@@ -4,93 +4,166 @@ using System.Reflection;
 using NUnit.Framework;
 using ComponentGlue;
 using ComponentGlue.Tests.Classes;
+using ComponentGlue.Tests.Attributes;
 
 namespace ComponentGlue.Tests
 {
 	[TestFixture]
 	public class AutoBindTests
 	{
-		[Test]
-		public void AutoBind_Binds_Correctly_For_Interfaces_With_One_Implementor()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
+        [Test]
+        public void AutoBind_Finds_Interfaces_With_No_Implementors()
+        {
+            bool check = false;
 
-			Assert.IsTrue(container.HasBinding<ISimple>());
-			Assert.IsInstanceOf(typeof(ISimple), container.Resolve<ISimple>());
-		}
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new TestAutoBindingStrategy((x, interfaceType, componentTypes) =>
+            {
+                if (interfaceType == typeof(INotImplemented))
+                {
+                    check = true;
+                }
+            }));
 
-		[Test]
-		public void AutoBind_Binds_Correctly_For_Interfaces_With_Multiple_Implementors()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
+            Assert.IsTrue(check);
+        }
 
-			Assert.IsTrue(container.HasBinding<IBaz>());
-			Assert.IsInstanceOf(typeof(Baz1), container.Resolve<IBaz>());
-		}
+        [Test]
+        public void AutoBind_Finds_All_Implementors()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new TestAutoBindingStrategy((x, interfaceType, componentTypes) =>
+            {
+                if (interfaceType == typeof(IFoo))
+                {
+                    Assert.Greater(componentTypes.Count, 1);
+                }
+            }));
+        }
 
-		[Test]
-		public void After_AutoBind_IOnlyExistsOnce_Can_Be_Resolved()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
+        [Test, ExpectedException]
+        public void Assigning_DefaultComponentAttributeType_To_Null_Throws_Exception()
+        {
+            AutoBindStrategy strategy = new AutoBindStrategy();
+            strategy.DefaultComponentAttributeType = null;
+        }
 
-            IOnlyExistsOnce obj = container.Resolve<IOnlyExistsOnce>();
-			Assert.IsInstanceOf(typeof(OnlyExistsOnce), obj);
-		}
+        [Test, ExpectedException]
+        public void Assigning_DefaultComponentAttributeType_To_Non_Attribute_Type_Throws_Exception()
+        {
+            AutoBindStrategy strategy = new AutoBindStrategy();
+            strategy.DefaultComponentAttributeType = typeof(ConfigurationTests);
+        }
 
-		[Test]
-        public void After_AutoBind_With_BindType_Singleton_IOnlyExistsOnce_Resolves_As_Singleton()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
+        [Test, ExpectedException]
+        public void Assigning_DefaultComponentAttributeType_Where_Type_Does_Not_Implement_IDefaultComponentAttribute_Throws_Exception()
+        {
+            AutoBindStrategy strategy = new AutoBindStrategy();
+            strategy.DefaultComponentAttributeType = typeof(CustomResolveAttribute);
+        }
 
-            IOnlyExistsOnce obj1 = container.Resolve<IOnlyExistsOnce>();
-            IOnlyExistsOnce obj2 = container.Resolve<IOnlyExistsOnce>();
+        [Test]
+        public void Components_Can_Be_Resolved_When_Using_Custom_DefaultComponentAttribute()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                DefaultComponentAttributeType = typeof(CustomDefaultComponentAttribute),
+            });
+            
+            IBar bar = container.Resolve<IBar>();
+            Assert.IsInstanceOf<BarWithCustomDefaultComponentAttribte>(bar);
+        }
 
-			Assert.AreSame(obj1, obj2);
-		}
+        [Test]
+        public void AutoBind_Binds_Correctly_For_Interfaces_With_One_Implementor()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly());
 
-		[Test]
-		public void After_AutoBind_ConcreteAB_Can_Be_Resolved()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
+            Assert.IsTrue(container.HasBinding<IHasOneImplementor>());
+            Assert.IsInstanceOf(typeof(HasOneImplementor), container.Resolve<IHasOneImplementor>());
+        }
 
-			ConcreteAB ab = container.Resolve<ConcreteAB>();
-			Assert.NotNull(ab.A);
-			Assert.NotNull(ab.B);
-		}
+        [Test]
+        public void AutoBind_Binds_Correctly_For_Interfaces_With_Multiple_Implementors_When_One_Implementor_Is_Marked_As_Default()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly());
 
-		[Test]
-		public void After_AutoBind_As_Singleton_ConcreteAB_Is_Resolved_As_Singleton()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton);
+            Assert.IsTrue(container.HasBinding<IBaz>());
+            Assert.IsInstanceOf(typeof(Baz1), container.Resolve<IBaz>());
+        }
 
-			ConcreteAB ab1 = container.Resolve<ConcreteAB>();
-			ConcreteAB ab2 = container.Resolve<ConcreteAB>();
+        [Test]
+        public void After_AutoBind_With_BindType_Singleton_IHasOneImplementor_Resolves_As_Singleton()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                BindType = ComponentBindType.Singleton
+            });
 
-			Assert.AreSame(ab1, ab2);
-		}
+            var obj1 = container.Resolve<IHasOneImplementor>();
+            var obj2 = container.Resolve<IHasOneImplementor>();
 
-		[Test]
-		public void AutoBind_With_Where_Func_Filters_Types_Properly()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Singleton, x => x.GetInterfaces().Contains(typeof(IBar)));
+            Assert.AreSame(obj1, obj2);
+        }
 
-			Assert.IsTrue(container.HasBinding<IBar>());
-			Assert.IsFalse(container.HasBinding<IFoo>());
-		}
+        [Test]
+        public void AutoBind_With_InterfaceTypeFilter_Filters_Properly()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                InterfaceTypeFilter = x => x.Name == "IBar"
+            });
 
-		[Test]
-		public void Multiple_Calls_To_AutoBind_Does_Not_Throw_Exception()
-		{
-			ComponentContainer container = new ComponentContainer();
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
-			container.AutoBind(Assembly.GetExecutingAssembly(), ComponentBindType.Transient);
-		}
+            Assert.IsTrue(container.HasBinding<IBar>());
+            Assert.IsFalse(container.HasBinding<IFoo>());
+        }
+
+        [Test]
+        public void AutoBind_With_ComponentTypesFilter_Filters_Properly()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                ComponentTypesFilter = x => x.Name.EndsWith("2")
+            });
+
+            Assert.IsInstanceOf(typeof(Baz2), container.Resolve<IBaz>());
+        }
+
+        [Test, ExpectedException(typeof(AutoBindException))]
+        public void AutoBind_With_ThrowOnUnresolved_Throws_Exception_When_There_Are_No_Implementors()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                ThrowOnUnresolved = true,
+                InterfaceTypeFilter = x => x.Name == "INotImplemented"
+            });
+        }
+
+        [Test, ExpectedException(typeof(AutoBindException))]
+        public void AutoBind_With_ThrowOnUnresolved_Throws_Exception_When_There_Are_Multiple_Implementors_And_One_Is_Not_Marked_As_Default()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly(), new AutoBindStrategy()
+            {
+                ThrowOnUnresolved = true,
+                InterfaceTypeFilter = x => x.Name == "IBar",
+                ComponentTypesFilter = x => !x.Name.EndsWith("3")
+            });
+        }
+
+        [Test]
+        public void Multiple_Calls_To_AutoBind_Using_Default_AutoBindStrategy_Does_Not_Throw_Exception()
+        {
+            ComponentContainer container = new ComponentContainer();
+            container.AutoBind(Assembly.GetExecutingAssembly());
+            container.AutoBind(Assembly.GetExecutingAssembly());
+        }
 	}
 }

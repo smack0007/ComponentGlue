@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoBindException.cs" />
+    <Compile Include="AutoBindStrategy.cs" />
     <Compile Include="BindingSyntax.cs" />
     <Compile Include="BindingSyntaxException.cs" />
     <Compile Include="ComponentBinding.cs" />
@@ -52,6 +54,7 @@
     <Compile Include="ComponentResolutionException.cs" />
     <Compile Include="DefaultComponentAttribute.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="IAutoBindStrategy.cs" />
     <Compile Include="IComponentBindingStrategy.cs" />
     <Compile Include="IComponentContainer.cs" />
     <Compile Include="IComponentResolver.cs" />

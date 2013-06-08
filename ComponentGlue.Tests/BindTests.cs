@@ -198,7 +198,7 @@ namespace ComponentGlue.Tests
         [Test, ExpectedException(typeof(ComponentResolutionException))]
         public void Bind_ToStrategy_Where_Strategy_Returns_Wrong_Type_Throws_Exception()
         {
-            var strategy = new TestBindingStrategy<Simple>(() => new Simple());
+            var strategy = new TestBindingStrategy<HasOneImplementor>(() => new HasOneImplementor());
 
             ComponentContainer container = new ComponentContainer();
             container.Bind<IBar>().ToStrategy(strategy);

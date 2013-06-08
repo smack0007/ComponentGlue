@@ -5,14 +5,14 @@ namespace ComponentGlue.Tests.Classes
 {
 	public class CustomAttributePropertyInject
 	{
-		[CustomInject]
+		[CustomResolve]
 		public IFoo Foo
 		{
 			get;
 			private set;
 		}
 
-		[CustomInject]
+		[CustomResolve]
 		public IBar Bar
 		{
 			get;
