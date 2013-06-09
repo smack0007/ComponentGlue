@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ComponentGlue</id>
+    <version>1.0.0</version>
+    <authors>Zachary Snow</authors>
+    <owners>smack00077</owners>
+    <projectUrl>http://zacharysnow.net</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Component Glue is a dependency injection / IoC container. Component Glue has a fluent syntax and aims to be simple to use.</description>
+    <copyright>Copyright 2013</copyright>
+    <tags>ioc di</tags>
+  </metadata>
+  <files>
+    <file src="ComponentGlue.dll" target="lib\net40" />
+	<file src="ComponentGlue.XML" target="lib\net40" />
+  </files>
+</package>

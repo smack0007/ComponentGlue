@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ComponentGlue")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Snowsoft")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ComponentGlue")]
-[assembly: AssemblyCopyright("Copyright © Zachary Snow 2012")]
+[assembly: AssemblyCopyright("Copyright © Zachary Snow 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
